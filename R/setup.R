@@ -15,7 +15,7 @@ loadPkg=function(toLoad){
 	}
 }
 
-toLoad=c( 'ggplot2', 'reshape2' )
+toLoad=c( 'ggplot2', 'reshape2', 'data.table' )
 loadPkg(toLoad)
 
 char = function(x){ as.character(x) }

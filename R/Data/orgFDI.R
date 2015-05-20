@@ -6,10 +6,8 @@ if( Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m' ) {
 ####
 # Load FDI files
 fdiPath = paste0(inPath, 'fdi/')
-setwd(fdiPath)
-
-expFiles = paste0(letters[1:11], '__ Goods, Value of Exports, FOB, US Doll.csv')
-impFiles = paste0(letters[1:11], '__ Goods, Value of Imports, CIF, US Doll.csv')
+expFiles = paste0(fdiPath, letters[1:11], '__ Goods, Value of Exports, FOB, US Doll.csv')
+impFiles = paste0(fdiPath, letters[1:11], '__ Goods, Value of Imports, CIF, US Doll.csv')
 
 extractCntries = function(file){
 	cntries=unique( strsplit(readLines(file, n=1), '",\"')[[1]] )
@@ -37,11 +35,16 @@ processIMF = function(file){
 
 	# Drop i - i
 	slice = slice[which(slice$i != slice$j), ]
-	return(slice) 	
+
+	# Drop items not in cntries vector
+	slice = slice[which(slice$j %in% cntries), ]
+
+	# Return object
+	return(slice)
 }
 
-expData = do.call('rbind', lapply(expFiles, function(f){ processIMF(f) }) )
-impData = do.call('rbind', lapply(impFiles, function(f){ processIMF(f) }) )
+expData = rbindlist( lapply(expFiles, function(f){ processIMF(f) }) )
+impData = rbindlist( lapply(impFiles, function(f){ processIMF(f) }) )
 ####
 
 ####
