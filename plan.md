@@ -16,6 +16,16 @@ substantive question
 dyadic trade model:
 ===
 
+* dependent variable:
+	- exports: IMF
+		+ need to go back and regather data for:
+> unique(unlist(lapply(strsplit(tmp, '_'), function(x) x[1])))
+ [1] "KOREA, REPUBLIC OF" "SENEGAL"            "SEYCHELLES"
+ [4] "SIERRA LEONE"       "SINGAPORE"          "SLOVAKIA"
+ [7] "SLOVENIA"           "SOLOMON ISLANDS"    "SOMALIA"
+[10] "SOUTH AFRICA"       "SPAIN"              "SRI LANKA"
+[13] "SUDAN"
+
 * monadic covariates:
 
 	- polity of both countries, gathered monthly level scores from CRISP

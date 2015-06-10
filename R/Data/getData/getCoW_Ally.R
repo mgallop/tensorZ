@@ -12,6 +12,8 @@ allyName = paste0(inPath, 'ally.zip')
 if(!file.exists(allyName)) { download.file(allyURL, allyName) } else {
 	ally = unzip(allyName, 
 		'version4.1_dta/alliance_v4.1_by_directed_yearly.dta') %>% read.dta()
+	unlink(paste0(rPath, 'Data/getData/version4.1_dta'), 
+        recursive=TRUE, force=TRUE)
 }
 ############################
 

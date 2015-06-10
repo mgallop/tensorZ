@@ -2,7 +2,6 @@
 if( Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m' ) { 
 	source('~/Research/WardProjects/tensorZ/R/setup.R') }
 load(paste0(inPath,'sampInfo.rda')) # loads frame, expFiles, impFiles
-cntries=char(unique(cntries$imf))
 ####
 
 ####
@@ -28,8 +27,12 @@ processIMF = function(file){
 	slice = slice[which(slice$i != slice$j), ]
 
 	# Drop items not in cntries vector
-	slice = slice[which(slice$i %in% cntries), ]
-	slice = slice[which(slice$j %in% cntries), ]
+	slice = slice[which(slice$i %in% cntries$imf), ]
+	slice = slice[which(slice$j %in% cntries$imf), ]
+
+	# Convert to cname
+	slice$i = cntries$cname[match(slice$i, cntries$imf)] %>% char()
+	slice$j = cntries$cname[match(slice$j, cntries$imf)] %>% char()
 
 	# Subset slice by dates in sampFrame
 	slice = slice[which(slice$t %in% dates$tdate), ]
@@ -38,7 +41,9 @@ processIMF = function(file){
 	slice$t = dates$date[match(slice$t, dates$tdate)]
 
 	# Add in unique id
-	slice$id = paste(slice$i, slice$j, slice$t, sep='_')
+	slice = mutate(slice, id = paste(i, j, t, sep='_'))
+	slice = mutate(slice, i_id= paste(i, t, sep = '_'))
+	slice = mutate(slice, j_id= paste(j, t, sep = '_'))
 
 	# Return object
 	return(slice)
