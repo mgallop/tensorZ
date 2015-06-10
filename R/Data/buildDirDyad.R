@@ -25,5 +25,5 @@ load('ally.rda'); load('distData.rda'); load('quad.rda')
 
 ####
 # Merge
-dirData = 
+# dirData = 
 ####

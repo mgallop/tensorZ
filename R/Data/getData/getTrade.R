@@ -28,6 +28,7 @@ processIMF = function(file){
 	slice = slice[which(slice$i != slice$j), ]
 
 	# Drop items not in cntries vector
+	slice = slice[which(slice$i %in% cntries), ]
 	slice = slice[which(slice$j %in% cntries), ]
 
 	# Subset slice by dates in sampFrame
@@ -44,10 +45,10 @@ processIMF = function(file){
 }
 
 expData = do.call('rbind', lapply(expFiles, function(f){ processIMF(f) }) )
-impData = do.call('rbind', lapply(impFiles, function(f){ processIMF(f) }) )
+# impData = do.call('rbind', lapply(impFiles, function(f){ processIMF(f) }) )
 ####
 
 ####
 # Save data
-save(expData, impData, file=paste0(inPath, 'dyadExpImp.rda'))
+save(expData, file=paste0(inPath, 'dyadExp.rda'))
 ####

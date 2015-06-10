@@ -19,7 +19,7 @@ loadPkg=function(toLoad){
 }
 
 toLoad=c( 'RMySQL', 'foreign' , 'CRISP', 'countrycode' ,
-	'ggplot2', 'reshape2', 'magrittr'
+	'ggplot2', 'reshape2', 'magrittr', 'foreach', 'doParallel'
 	)
 loadPkg(toLoad)
 
