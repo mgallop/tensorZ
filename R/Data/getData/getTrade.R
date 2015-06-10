@@ -3,7 +3,6 @@ if( Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m' ) {
 	source('~/Research/WardProjects/tensorZ/R/setup.R') }
 load(paste0(inPath,'sampInfo.rda')) # loads frame, expFiles, impFiles
 cntries=char(unique(cntries$imf))
-dates=unique(dates$t)
 ####
 
 ####
@@ -22,6 +21,7 @@ processIMF = function(file){
 	slice$i = unlist(lapply(ids, function(x) x[1]))
 	slice$t = unlist(lapply(ids, function(x) x[2]))
 	slice = slice[,c('i', 'j', 't', 'value')]
+	slice$j = char(slice$j)
 	slice$value = num(slice$value)
 
 	# Drop i - i
@@ -30,15 +30,14 @@ processIMF = function(file){
 	# Drop items not in cntries vector
 	slice = slice[which(slice$j %in% cntries), ]
 
-	# Org dates
-	dateText = strsplit(slice$t, ' ')
-	slice$month = unlist(lapply(dateText,function(x) x[1]))
-	slice$year = unlist(lapply(dateText,function(x) x[2]))
-	slice = slice[,setdiff(names(slice), 't')]
-	slice$date=as.Date(paste0(1, slice$month, slice$year), '%d%b%Y')
+	# Subset slice by dates in sampFrame
+	slice = slice[which(slice$t %in% dates$tdate), ]
 
-	# Subset by date
-	slice = slice[which(slice$date %in% dates),]
+	# Add in cleaned date variable
+	slice$t = dates$date[match(slice$t, dates$tdate)]
+
+	# Add in unique id
+	slice$id = paste(slice$i, slice$j, slice$t, sep='_')
 
 	# Return object
 	return(slice)
@@ -50,6 +49,5 @@ impData = do.call('rbind', lapply(impFiles, function(f){ processIMF(f) }) )
 
 ####
 # Save data
-setwd(inPath)
-save(expData, impData, file='dyadExpImp.rda')
+save(expData, impData, file=paste0(inPath, 'dyadExpImp.rda'))
 ####
