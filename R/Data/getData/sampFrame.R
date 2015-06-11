@@ -6,12 +6,13 @@ if( Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m' ) {
 ####
 # Read sample info from IMF files
 fdiPath = paste0(inPath, 'trade/')
-expFiles = paste0(fdiPath, letters[1:11], '__ Goods, Value of Exports, FOB, US Doll.csv')
-impFiles = paste0(fdiPath, letters[1:11], '__ Goods, Value of Imports, CIF, US Doll.csv')
+expFiles = list.files(fdiPath)[grepl('Value of Exports', list.files(fdiPath))]
 
-extractSamp = function(file,line){
-	stuff = unique(strsplit(readLines(file, n=2)[line], '",\"')[[1]] )
-	return( stuff[ c( -1, -length(stuff) ) ] )
+extractSamp = function(file,line, path=fdiPath){
+	file = paste0(path, file)
+	stuff = strsplit(readLines(file, n=2)[line], '",\"')[[1]] %>% unique()
+	stuff = str_replace_all(stuff, '[[:punct:]]', '') %>% unique()
+	return(stuff)
 }
 ####
 
@@ -20,7 +21,8 @@ extractSamp = function(file,line){
 # Cntries in IMF data
 units = unlist( lapply(expFiles, function(f){ extractSamp(f,1) }) )
 cname = countrycode(units, 'country.name', 'country.name') 
-cntries = data.frame(imf=units,cname=cname); rm(list=c('cname','units')) # Cleanup
+cntries = data.frame(imf=units,cname=cname)
+rm(list=c('cname','units')) # Cleanup
 
 # Cntries in CRISP data
 data(crisp.data); crisp=crisp.data; rm(list='crisp.data')
@@ -62,12 +64,17 @@ frame$year = num(frame$year)
 ####
 
 ####
-# Create id variable
-frame$id = paste(frame$i, frame$j, frame$t, sep='_')
+# Create id variables
+frame = data.table( frame )
+frame[,id:=paste(i,j,t,sep='_')]
+frame[,i_id:=paste(i,t,sep='_')]
+frame[,j_id:=paste(j,t,sep='_')]
+
+frame = data.frame( frame )
 ####
 
 ####
 # Save objects
-save(expFiles, impFiles, cntries, dates, file=paste0(inPath,'sampInfo.rda'))
+save(cntries, dates, file=paste0(inPath,'sampInfo.rda'))
 save(frame, file=paste0(inPath,'frame.rda'))
 ####
