@@ -12,7 +12,7 @@ allyName = paste0(inPath, 'ally.zip')
 if(!file.exists(allyName)) { download.file(allyURL, allyName) } else {
 	ally = unzip(allyName, 
 		'version4.1_dta/alliance_v4.1_by_directed_yearly.dta') %>% read.dta()
-	unlink(paste0(rPath, 'Data/getData/version4.1_dta'), 
+	unlink(paste0(getwd(), '/version4.1_dta'), 
         recursive=TRUE, force=TRUE)
 }
 ############################
@@ -38,8 +38,15 @@ ally = ally[which(ally$j %in% cntries$cname),]
 
 # Add id column and merge into frame
 ally$ally = 1
-ally$id = paste(ally$i, ally$j, ally$year, sep='_')
-frame$tmp = paste(frame$i, frame$j, frame$year, sep='_')
+
+ally = data.table( ally )
+ally[,id:=paste(i,j,year,sep='_')]
+ally = data.frame( ally )
+
+frame = data.table( frame )
+frame[,tmp:=paste(i,j,year,sep='_')]
+frame = data.frame( frame )
+
 frame$ally = ally$ally[match(frame$tmp, ally$id)]
 ally = frame[,c('i','j','t','id','ally')]
 

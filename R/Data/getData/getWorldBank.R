@@ -31,9 +31,10 @@ wdi$id = paste(wdi$cname, wdi$year, sep='_')
 wbData=expand.grid(cname=cntries$cname, t=dates$date)
 wbData$year = dates$year[match(wbData$t, dates$date)]
 wbData$id = paste(wbData$cname, wbData$year, sep='_')
-wbData = merge(wbData, wdi[,c('id',wbVars)], by='id', all.x=T, all.y=F)
+wbData = merge(wbData, wdi[,c('id',wbVars,'gdpLog','gdpCapLog','popLog')], 
+	by='id', all.x=T, all.y=F)
 wbData$id = paste(wbData$cname, wbData$t, sep='_')
-wbData = wbData[,c('id', wbVars)]
+wbData = wbData[,c('id', wbVars,'gdpLog','gdpCapLog','popLog')]
 ####
 
 ####

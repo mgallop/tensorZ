@@ -6,7 +6,10 @@ load(paste0(inPath,'sampInfo.rda')) # loads frame, expFiles, impFiles
 
 ####
 # get monthly level polity from CRISP
-crispVars = c(  'DEMOC', 'AUTOC' ) # Polity
+crispVars = c(  'DEMOC', 'AUTOC', # Polity
+	'NY.GDP.MKTP.KD', # GDP, constant 2005 US dollars
+	'NY.GDP.PCAP.KD', # GDP per capita, constant 2005 US dollars
+	'SP.POP.TOTL') # population	  
 data(crisp.data); crisp=crisp.data; rm(list='crisp.data')
 
 crisp = crisp[,c('country','ccode','date','year',crispVars)]
@@ -15,9 +18,14 @@ crisp$ccode = num(crisp$ccode)
 crisp$polity = crisp$DEMOC - crisp$AUTOC + 11
 crisp = crisp[,setdiff(names(crisp), crispVars)]
 
-# Add in US polity data...10s all the way through
+# Add in US data...10s all the way through
+## Polity
 slice = crisp[crisp$country=='FRANCE',]
 slice$country = 'United States';slice$ccode = 2;slice$polity = 10
+## World Bank
+loadPkg('WDI')
+wdi=WDI(country='US', indicator=crispVars[3:5], start=2001, end=2015)
+
 crisp = rbind(crisp, slice)
 
 # Limit to countries in sample

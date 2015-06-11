@@ -13,7 +13,7 @@ cleanScripts = paste0(
 	paste0(rPath, 'Data/getData/'), files )
 
 # Parameters for parallelization
-cl = makeCluster(6)
+cl = makeCluster(8)
 registerDoParallel(cl)
 
 # Run cleaning scripts in parallel
