@@ -62,3 +62,10 @@ other todos:
 * set up the four quad variables at the monthly level for all the countries and then include the quad variables for the domestic within each country
 
 * the cross-sections should be populated by domestic events
+
+
+send email about north korea and new zealand
+
+
+
+alex volfosky
