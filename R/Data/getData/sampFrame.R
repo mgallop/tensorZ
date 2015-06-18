@@ -30,6 +30,10 @@ crispCntry = append(char(unique(crisp$country)), 'United States')
 crispCname = countrycode(crispCntry, 'country.name', 'country.name')
 crispCname[crispCntry=='COSTA_RICA'] = "COSTA RICA"
 crispCname[crispCntry=='UNITED_KINGDOM'] = "UNITED KINGDOM"
+crispCname[crispCntry=='NORTH_KOREA'] = "KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF"
+crispCname[crispCntry=='PAPUA_NEW_GUINEA'] = "PAPUA NEW GUINEA"
+crispCname[crispCntry=='NEW_ZEALAND'] = "NEW ZEALAND"
+
 crispSamp = data.frame(country=crispCntry, cname=crispCname); rm(list=c('crispCname', 'crispCntry')) # Cleanup
 unique(crispSamp[is.na(crispSamp$cname),c('country', 'cname')]) # check for NAs
 
