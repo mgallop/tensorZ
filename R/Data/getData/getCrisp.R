@@ -22,9 +22,17 @@ crisp = crisp[,setdiff(names(crisp), crispVars)]
 ## Polity
 slice = crisp[crisp$country=='FRANCE',]
 slice$country = 'United States';slice$ccode = 2;slice$polity = 10
-## World Bank
-loadPkg('WDI')
-wdi=WDI(country='US', indicator=crispVars[3:5], start=2001, end=2015)
+## IMF WEI Dataset
+imf = read.csv(paste0(inPath, 'weoreptc.csv'))
+relVars = c('Population', 'Gross domestic product, constant prices', 'Gross domestic product per capita, constant prices')
+relUnits = c('National currency', 'Persons')
+imfUS = imf %>% .[.$Country=='United States',] %>% .[.$Subject.Descriptor %in% relVars,] %>% .[.$Units %in% relUnits,]
+names(imfUS)[7:(ncol(imfUS) - 1)] = 1999:2014
+imfUS = imfUS[, c( 'Subject.Descriptor',char(1999:2014) ) ] %>% melt(.,id='Subject.Descriptor') %>% dcast(., variable ~ Subject.Descriptor)
+names(imfUS) = c('year', 'NY.GDP.PCAP.KD', 'NY.GDP.MKTP.KD', 'SP.POP.TOTL')
+for(ii in 1:ncol(imfUS)){ imfUS[,ii] = num(imfUS[,ii]) }
+
+# 999993458   996536.8
 
 crisp = rbind(crisp, slice)
 

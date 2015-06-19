@@ -27,6 +27,7 @@ loadPkg(toLoad)
 
 char = function(x){ as.character(x) }
 num = function(x){ as.numeric(char(x)) }
+trim = function (x) { gsub("^\\s+|\\s+$", "", x) }
 substrRight = function(x, n){ substr(x, nchar(x)-n+1, nchar(x)) }
 
 # Set a theme for gg
