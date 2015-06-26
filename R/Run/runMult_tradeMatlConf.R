@@ -16,7 +16,6 @@ load(paste0(inPath, "YX.rda"))
 
 #### Maxim Likelihood
 B = mlm.ALS(Y, X)
-dim(B)
 save(B, file=paste0('mlikTradeConf.rda'))
 ####
 

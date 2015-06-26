@@ -70,7 +70,16 @@ i_wrldExpLogX = prepMLTR(var='i_wrldExpLog', incMain=TRUE, incRecip=FALSE, incTr
 
 ####
 # Combine into X array across third dimension
-
+X = aperm(apply(X, c(1,2,5), 'c'), c(2,3,1,4)) # First combine relational endogenous terms
+tmp = array(dim = c(dim(X)[1:2], dim(X)[3] + 7, dim(X)[4] ) )
+tmp[,,1:6,] = X
+tmp[,,7:8,] = ptaX
+tmp[,,9,] = distX[,,1,]
+tmp[,,10,] = i_polX[,,1,]
+tmp[,,11,] = i_gdpLogX[,,1,]
+tmp[,,12,] = i_popLogX[,,1,]
+tmp[,,13,] = i_wrldExpLogX[,,1,]
+X = tmp
 ####
 
 ####
@@ -82,25 +91,13 @@ dimnames(Y)[[3]] = c('exports', 'matlConf')
 dimnames(Y)[[4]] = dimnames(expArr)[[3]][-1]
 
 ## Labels for X
-dimnames(X)[1:3] = dimnames(Y)[1:3]
-dimnames(X)[[4]] = c("ij","ji","ijk") 
-dimnames(X)[[5]] = c('endo', 'pta', 'dist')
-dimnames(X)[[6]] = dimnames(Y)[[4]]
-
-# Finalize arrays
-
-
-# # Finalize arrays
-# dnX = dimnames(X)
-# X = aperm( apply(X, c(1,2,5,6), 'c'), c(2,3,1,4,5) )
-# dimnames(X)[1:2] = dnX[1:2]
-# dimnames(X)[[4]] = dnX[[5]]
-# dimnames(X)[[3]] = c( outer( dnX[[3]], dnX[[4]], paste0 ) )
-
-# dnY = dimnames(Y)
-# Y = array(Y, dim=append( dim(Y), c(1), after=3 ) )
-# dimnames(Y)[1:3] = dnY[1:3]
-# dimnames(Y)[[5]] = dnY[[4]]
+dimnames(X)[1:2] = dimnames(Y)[1:2]
+dimnames(X)[[4]] = dimnames(Y)[[4]]
+dimnames(X)[[3]] = c(
+	'exp_ij', 'mconf_ij', 'exp_ji', 'mconf_ji', 'exp_ijk', 'mconf_ijk',
+	'pta_ij', 'pta_ijk', 
+	'dist_ij', 'pol_ij', 'gdp_ij', 'pop_ij', 'wrldexp_ij'
+	)
 
 ## save 
 save(Y, X, file=paste0(inPath, "YX.rda"))
