@@ -10,7 +10,7 @@ setwd(inPath)
 # Trade data 
 load('dyadExp.rda') # loads expData object
 
-# Monadic variables (polity from CRISP, gdp & pop from worldbank)
+# Monadic variables (polity from CRISP, gdp & pop from imf)
 
 ## CRISP
 load('crisp.rda')
@@ -18,31 +18,36 @@ load('crisp.rda')
 stopifnot( length(intersect(expData$i_id, crisp$id))==nrow(crisp) )
 stopifnot( length(intersect(expData$j_id, crisp$id))==nrow(crisp) )
 ### Merge in variables
-expData$i_polity = crisp$polity[match(expData$i_id, crisp$id)]
-expData$j_polity = crisp$polity[match(expData$j_id, crisp$id)]
+crispVars = c('polity', 'gdp', 'gdpCap', 'pop', 'gdpLog', 'gdpCapLog', 'popLog')
+for(var in crispVars){
+	expData$tmp = crisp[,var][match(expData$i_id, crisp$id)]
+	names(expData)[ncol(expData)] = paste('i', var, sep='_')
+	expData$tmp = crisp[,var][match(expData$j_id, crisp$id)]
+	names(expData)[ncol(expData)] = paste('j', var, sep='_') }
 rm(list='crisp')
 
-## World Bank Data
-load('wbData.rda')
+## World Exports
+load('wrldExprts.rda')
 ### Check for matches
-stopifnot( length(intersect(expData$i_id, wbData$id))==nrow(wbData) )
-stopifnot( length(intersect(expData$j_id, wbData$id))==nrow(wbData) )
+stopifnot( length(intersect(expData$i_id, expMoData$id))==nrow(expMoData) )
+stopifnot( length(intersect(expData$j_id, expMoData$id))==nrow(expMoData) )
 ### Merge in variables
-wbVars = names(wbData)[-1]
-for(var in wbVars){
-	expData$tmp = wbData[,var][match(expData$i_id, wbData$id)]
+imfVars = c('wrldExp', 'wrldExpLog' )
+for(var in imfVars){
+	expData$tmp = expMoData[,var][match(expData$i_id, expMoData$id)]
 	names(expData)[ncol(expData)] = paste('i', var, sep='_')
-	expData$tmp = wbData[,var][match(expData$j_id, wbData$id)]
+	expData$tmp = expMoData[,var][match(expData$j_id, expMoData$id)]
 	names(expData)[ncol(expData)] = paste('j', var, sep='_') }
-rm(list='wbData')
+rm(list='expMoData')
 
 # Dyadic variables (alliance from COW, geo from cshapes, quad from ICEWS)
 
 ## Aliance
 load('ally.rda')
 ### Check for matches
-stopifnot( length( intersect(ally$id, expData$id) ) == nrow(expData) )
+stopifnot( length( intersect(ally$id, expData$id) ) == nrow(ally) )
 ### Merge in variable
+ally$ally[which(is.na(ally$ally) & ally$t<as.Date('01/01/13', '%m/%d/%y'))] = 0
 expData$ally = ally$ally[match(expData$id, ally$id)]
 rm(list='ally')
 
@@ -65,6 +70,16 @@ quadVars = c('verbCoop', 'matlCoop', 'verbConf', 'matlConf')
 for(var in quadVars){
 	expData$tmp = quadData[,var][match(expData$id, quadData$id)]
 	names(expData)[ncol(expData)] = var }
+
+## PTAs
+load('desta.rda')
+### Check for matches
+stopifnot( length( intersect(desta$id, expData$id) ) == nrow(desta) )
+### Merge in variables
+dVars = c('ptaCnt', 'pta')
+for(var in dVars){
+	expData$tmp = desta[,var][match(expData$id, desta$id)]
+	names(expData)[ncol(expData)] = var }	
 ####
 
 ####

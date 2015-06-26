@@ -13,6 +13,8 @@ cleanScripts = paste0(
 	paste0(rPath, 'Data/getData/'), files )
 
 # Parameters for parallelization
+toLoad = c('foreach', 'doParallel')
+loadPkg(toLoad)
 cl = makeCluster(8)
 registerDoParallel(cl)
 
@@ -21,4 +23,4 @@ foreach(script = cleanScripts) %dopar% { source(script) }
 stopCluster(cl)
 
 # Run iquad
-source(paste0(rPath, 'Data/getData/getIQuad.R'))
+system(paste0("Rscript ", paste0(rPath, 'Data/getData/getIQuad.R')))

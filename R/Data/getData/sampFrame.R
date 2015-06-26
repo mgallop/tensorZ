@@ -5,10 +5,10 @@ if( Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m' ) {
 
 ####
 # Read sample info from IMF files
-fdiPath = paste0(inPath, 'trade/')
-expFiles = list.files(fdiPath)[grepl('Value of Exports', list.files(fdiPath))]
+tPath = paste0(inPath, 'trade/')
+expFiles = list.files(tPath)[grepl('Value of Exports', list.files(tPath))]
 
-extractSamp = function(file,line, path=fdiPath){
+extractSamp = function(file,line, path=tPath){
 	file = paste0(path, file)
 	stuff = strsplit(readLines(file, n=2)[line], '",\"')[[1]] %>% unique()
 	stuff = str_replace_all(stuff, '[[:punct:]]', '') %>% unique()
@@ -25,6 +25,7 @@ cntries = data.frame(imf=units,cname=cname)
 rm(list=c('cname','units')) # Cleanup
 
 # Cntries in CRISP data
+loadPkg('CRISP')
 data(crisp.data); crisp=crisp.data; rm(list='crisp.data')
 crispCntry = append(char(unique(crisp$country)), 'United States')
 crispCname = countrycode(crispCntry, 'country.name', 'country.name')
@@ -41,6 +42,9 @@ unique(crispSamp[is.na(crispSamp$cname),c('country', 'cname')]) # check for NAs
 cntries$inCrisp = ifelse(cntries$cname %in% crispSamp$cname, 1, NA)
 cntries = na.omit(cntries)
 cntries$crisp = crispSamp$country[match(cntries$cname, crispSamp$cname)]
+setdiff(crispSamp$cname, cntries$cname)
+# IMF DOT (http://data.imf.org/?sk=8aa6eb7c-598b-4d3b-82f4-adab95d23145&dsId=DS_1414779485682)
+## has no data for Bhutan, Botswana, Eritrea, Lesotho, Namibia, Swaziland, and Taiwan
 cntries = cntries[,setdiff(names(cntries), 'inCrisp')]
 ####
 
@@ -57,6 +61,12 @@ dates$year = unlist(lapply(strsplit(dates$tdate, ' '),function(x) x[2]))
 
 # Cut to beginning of ICEWS dataset
 dates = dates[dates$date >= min(crisp$date),]
+####
+
+####
+# Set up array frame
+aFrame = array(dim=c(nrow(cntries),nrow(cntries),nrow(dates)),
+	dimnames=list(cntries$cname, cntries$cname, dates$date))
 ####
 
 ####

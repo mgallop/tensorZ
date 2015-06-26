@@ -5,6 +5,7 @@ load(paste0(inPath,'sampInfo.rda')) # loads frame, expFiles, impFiles
 ####
 
 ####
+loadPkg('CRISP')
 # get monthly level polity from CRISP
 crispVars = c(  'DEMOC', 'AUTOC', # Polity
 	'NY.GDP.MKTP.KD', # GDP, constant 2005 US dollars
@@ -53,9 +54,20 @@ crisp = rbind(crisp, slice)
 # Removes New Zealand, Papua New Guinea, S. Korea
 crisp = crisp[which(crisp$country %in% cntries$crisp),]
 
+# Dates in sample
+crisp = crisp[which(crisp$date %in% dates$date),]
+
 # Add cname and id vector
 crisp$cname = cntries$cname[match(crisp$country, cntries$crisp)]
 crisp$id = paste(crisp$cname, crisp$date, sep='_')
+####
+
+####
+# Rename and add logged versions
+names(crisp)[7:9] = c('gdp', 'gdpCap', 'pop')
+crisp$gdpLog = log(crisp$gdp + 1)
+crisp$gdpCapLog = log(crisp$gdpCap)
+crisp$popLog = log(crisp$pop + 1)
 ####
 
 ####

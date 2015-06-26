@@ -9,12 +9,11 @@ load(paste0(inPath,'frame.rda')) # loads frame
 # Download file from ICOW site
 allyURL = 'http://www.correlatesofwar.org/data-sets/formal-alliances/alliances-data-dta-zip/at_download/file'
 allyName = paste0(inPath, 'ally.zip')
-if(!file.exists(allyName)) { download.file(allyURL, allyName) } else {
-	ally = unzip(allyName, 
-		'version4.1_dta/alliance_v4.1_by_directed_yearly.dta') %>% read.dta()
-	unlink(paste0(getwd(), '/version4.1_dta'), 
-        recursive=TRUE, force=TRUE)
-}
+if(!file.exists(allyName)) { download.file(allyURL, allyName) }
+ally = unzip(allyName, 
+	'version4.1_dta/alliance_v4.1_by_directed_yearly.dta') %>% read.dta()
+unlink(paste0(getwd(), '/version4.1_dta'), 
+    recursive=TRUE, force=TRUE)
 ############################
 
 ############################
@@ -50,9 +49,9 @@ frame = data.frame( frame )
 frame$ally = ally$ally[match(frame$tmp, ally$id)]
 ally = frame[,c('i','j','t','id','ally')]
 
-# Cleanup
-ally$ally[ which( is.na(ally$ally) & 
-	ally$t < as.Date('01/01/13',"%m/%d/%y") ) ] = 0
+# Cleanup, note that ally data ends at 12/2012
+# ally$ally[ which( is.na(ally$ally) & 
+# 	ally$t < as.Date('01/01/13',"%m/%d/%y") ) ] = 0
 ############################
 
 ############################

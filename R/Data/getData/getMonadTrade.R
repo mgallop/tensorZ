@@ -11,9 +11,9 @@ expFiles = list.files(tPath)[grepl('Value of Exports', list.files(tPath))]
 ####
 
 ####
-# Create directed dyadic datasets
+# Get out world trade for each country
 # Function to process IMF DOT csv Sheets
-processIMF = function(file, path=tPath, verbose=TRUE){
+processMonadIMF = function(file, path=tPath, verbose=TRUE){
 	if(verbose){print(paste0('Processing ', file, '...'))}
 	slice = read.csv(paste0(path, file), header=FALSE)
 	names(slice) = paste(
@@ -29,6 +29,10 @@ processIMF = function(file, path=tPath, verbose=TRUE){
 	slice$j = slice$j %>% char()
 	slice$value = num(slice$value)
 
+	# Subset slices by exports to world 
+	stopifnot( 'World' %in% slice$j )
+	slice = slice[slice$j=='World',]
+
 	# Subset slice by dates in sampFrame
 	slice = slice[which(slice$t %in% dates$tdate), ]
 	stopifnot( length(unique(slice$t)) ==  nrow(dates) )
@@ -37,16 +41,15 @@ processIMF = function(file, path=tPath, verbose=TRUE){
 	return(slice)
 }
 
-expData = lapply(expFiles, function(f){ processIMF(f) }) %>% do.call('rbind', .)
+expMoData = lapply(expFiles, function(f){ processMonadIMF(f) }) %>% do.call('rbind', .)
+names(expMoData)[ncol(expMoData)] = 'wrldExp'
+expMoData$wrldExpLog = log( expMoData$wrldExp )
 ####
 
 ####
 # Cleaning 
-# Remove Thailand i-j cases
-expData = expData[which(expData$i!=expData$j),]
-
 # Add in cnames and ccodes
-tCntries = c(expData$i, expData$j) %>% unique() %>% char() %>% data.frame(.,stringsAsFactors=FALSE); names(tCntries)='tCntry'
+tCntries = expMoData$i %>% unique() %>% char() %>% data.frame(.,stringsAsFactors=FALSE); names(tCntries)='tCntry'
 tCntries$cname = countrycode(tCntries$tCntry, 'country.name', 'country.name')
 toDrop = c('European Union', 'Middle East, North Africa, Afghanistan, and Pakistan', 'Sub-Saharan Africa', 'Belgium-Luxembourg not specified', 'Czechoslovakia not specified', 'Falkland Islands', 'French Territories: French Polynesia', 'Kosovo, Republic of', 'Serbia and Montenegro', 'Serbia Montenegro not specified', 'Serbia, Republic of', 'Timor-Leste, Dem. Rep. of', 'U.S.S.R. not specified', 'West Bank and Gaza', 'Yugoslavia not specified', 'SACCA excluding South Africa')
 tCntries = tCntries[which(!tCntries$tCntry %in% toDrop),] # Drop units/countries that aren't in CRISP or countrycode mislabeled
@@ -54,27 +57,18 @@ tCntries = tCntries[!is.na(tCntries$cname),] # Drop groupings of countries
 # Subset to countries in cntries from sampFrame.R
 tCntries = tCntries[which(tCntries$cname %in% cntries$cname),] # Leads to dropping of mostly small countries
 
-# Subset expdata by tCntries are relabel
-expData = expData[which(expData$i %in% tCntries$tCntry),]
-expData = expData[which(expData$j %in% tCntries$tCntry),]
-expData$i = tCntries$cname[match(expData$i, tCntries$tCntry)]
-expData$j = tCntries$cname[match(expData$j, tCntries$tCntry)]
+# Subset expMoData by tCntries are relabel
+expMoData = expMoData[which(expMoData$i %in% tCntries$tCntry),]
+expMoData$i = tCntries$cname[match(expMoData$i, tCntries$tCntry)]
 
 # Add in cleaned date variable
-expData$t = dates$date[match(expData$t, dates$tdate)]
+expMoData$t = dates$date[match(expMoData$t, dates$tdate)]
 
-# Add in unique id
-expData = data.table( expData )
-expData[,id:=paste(i,j,t,sep='_')]
-
-# Merge with frame
-load(paste0(inPath,'frame.rda'))
-frame$exports = expData$value[match(frame$id, expData$id)]
-frame$exports[is.na(frame$exports)] = 0
-expData = frame
+# Add cname and id vector
+expMoData$id = paste(expMoData$i, expMoData$t, sep='_')
 ####
 
 ####
-# Save data
-save(expData, file=paste0(inPath, 'dyadExp.rda'))
+# Save
+save(expMoData, file=paste0(inPath, 'wrldExprts.rda'))
 ####

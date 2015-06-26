@@ -1,71 +1,63 @@
-substantive question
+Sample and DVs
 ===
 
-* how can we understand what global trade patterns look like, in the presence of a china that is more active in africa
+* First a few updates, models based on what we discussed last week are finally running up on an ec2 instance. Our sample is comprised of 161 countries over the period of March 2001 to December 2014 (including info for N. Korea, N. Zealand and Papua New Guinea, it has just gotten).
 
-	- that speaks to the importance of the network context, just understanding bilateral trade stuff does not get you that far
+* The two dependent variables I’m feeding into the MLTR are: Log(Exports) and a standardized version of the material conflict variable. I also include the direct (_i), reciprocal (_ji) and transitive (_ijk) 1 month lags of both of these variables as IVs.
 
-	- counterfactual with africa: what happens if africa became more active, even if each african country grew only 10\% over the next couple of years, what predictions would we make
-
-	- does this speak to what countries are most likely to engate in disputes at the WTO
-
-* complicated interdependencies in the world...milner
-
-* kantian triad...endogenous
-
-dyadic trade model:
+The exogenous IVs are, each lagged by one month
 ===
 
-* dependent variable:
-	- exports: IMF
-		+ need to go back and regather data for:
-> unique(unlist(lapply(strsplit(tmp, '_'), function(x) x[1])))
- [1] "KOREA, REPUBLIC OF" "SENEGAL"            "SEYCHELLES"
- [4] "SIERRA LEONE"       "SINGAPORE"          "SLOVAKIA"
- [7] "SLOVENIA"           "SOLOMON ISLANDS"    "SOMALIA"
-[10] "SOUTH AFRICA"       "SPAIN"              "SRI LANKA"
-[13] "SUDAN"
+* Dyadic Covariates:
+     + Presence of a Preferential Trade Agreement (PTA) between i and j (this is an undirected monthly level variable). I include both the direct and transitive version of this variable.
+     + Presence of an Alliance between i and j (also undirected, yearly level). Direct and transitive versions.
+     + Centroid distance between i and j,  (directed). Direct version.
 
-* monadic covariates:
+* Monadic Covariates:
 
-	- polity of both countries, gathered monthly level scores from CRISP
+     + Polity, monthly level variable
 
-	- gdp of both countries, gathered from World Bank in constant 2005 US dollars
+     + Log(GDP), yearly level variable but imputed at the monthly level in the CRISP dataset
 
-	- population of both countries
+     + Log(Population), yearly level variable but imputed at the monthly level in the CRISP dataset
+     + Log(Total Exports to any country), monthly level variable — this is to control for countries that simply do not trade much
 
-	- spatial distance trade variable, created by weighting trade with distance measures from cshapes
-		+ Will add this later. To create this I first need to summarize the level of total exports each indiv country receives in a given month and then for each country I would weight by the total exports their "neighbors" received. Likely overkill in this analysis so for now lets just forget about it, and we should already be able to capture this kind of geographic interdependency through our overall modeling approach.
-
-	- wto membership
-		+ no point in collecting, most all countries gained entry into the WTO on the same date
-		+ https://www.wto.org/english/thewto_e/whatis_e/tif_e/org6_e.htm
-
-* dyadic disputes:
-
-	- alliance, gathered from COW
-
-	- geographic proximity, gathered from cshapes
-
-	- verbal conflict/material conflict
-
-model formulation:
+Full model specification for set of autoregressive equations:
 ===
 
-* mltr
+Trade =
+	Trade_t-1,ij + Trade_t-1,ji + Trade_t-1,ijk +
+	Matl.Conf._t-1,ij + Matl.Conf._t-1,ji + Matl.Conf._t-1,ijk +
+	PTA_t-1,ij + PTA_t-1,ijk +
+	Ally_t-1,ij + Ally_t-1,ijk +
+	Distance_t-1,ij +
+	Polipty_t-1,i +
+	Log(GPD)_t-1,i +
+	Log(Pop)_t-1,i +
+	Log(Total Exports)_t-1,i
 
-* additive approach
+Matl.Conf =
+	Trade_t-1,ij + Trade_t-1,ji + Trade_t-1,ijk +
+	Matl.Conf._t-1,ij + Matl.Conf._t-1,ji + Matl.Conf._t-1,ijk +
+	PTA_t-1,ij + PTA_t-1,ijk +
+	Ally_t-1,ij + Ally_t-1,ijk +
+	Distance_t-1,ij +
+	Polity_t-1,i +
+	Log(GPD)_t-1,i +
+	Log(Pop)_t-1,i +
+	Log(Total Exports)_t-1,i
 
-other todos:
+Necessary Data Structure
 ===
 
-* set up the four quad variables at the monthly level for all the countries and then include the quad variables for the domestic within each country
-
-* the cross-sections should be populated by domestic events
-
-
-send email about north korea and new zealand
-
-
-
-alex volfosky
+* Array
+	- n = 161 countries, t = 166 months
+	- DVs = 2, Trade and Matl. Conf.
+	- Add reciprocal and transitive versions of both variables as endogenous predictors
+	- Create another slice in the tensor to hold exogenous exogenous equations, specifically:
+		+ PTA
+		+ Distance
+		+ Ally
+		+ GDP
+		+ Population
+		+ Total Exports

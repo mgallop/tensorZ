@@ -7,6 +7,7 @@ load(paste0(inPath,'frame.rda')) # loads frame
 
 ####
 # sql server
+loadPkg('RMySQL')
 mysqlSetup('shahryarm', 'green29tumble', 'event_data')
 on.exit(dbDisconnect(conn))
 ####

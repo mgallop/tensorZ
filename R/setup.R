@@ -18,10 +18,9 @@ loadPkg=function(toLoad){
 	}
 }
 
-toLoad=c( 'RMySQL', 'foreign' , 'CRISP', 'countrycode' ,
+toLoad=c('foreign' , 'countrycode' ,
 	'ggplot2', 
-	'reshape2', 'magrittr', 'dplyr', 'stringr','data.table',
-	'foreach', 'doParallel'
+	'reshape2', 'magrittr', 'dplyr', 'stringr','data.table'
 	)
 loadPkg(toLoad)
 
