@@ -18,9 +18,11 @@ loadPkg=function(toLoad){
 	}
 }
 
-toLoad=c('foreign' , 'countrycode' ,
-	'ggplot2', 
-	'reshape2', 'magrittr', 'dplyr', 'stringr','data.table'
+toLoad=c(
+	'foreign' , 'countrycode' ,
+	'reshape2', 'magrittr', 'dplyr', 'stringr','data.table', 'abind',
+	'ggplot2', 'grid', 'xtable', 'tikzDevice',	
+	'network'
 	)
 loadPkg(toLoad)
 

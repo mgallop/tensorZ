@@ -6,6 +6,7 @@ if( Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m' ) {
 # Load ALM function
 source(paste0(rFuncs, "functions_als.r"))
 source(paste0(rFuncs, "functions_bayes.r"))
+source( paste0(rFuncs, '/tfunctions.r') )
 #### 
 
 #### 
