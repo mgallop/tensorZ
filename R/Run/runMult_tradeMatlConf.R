@@ -6,7 +6,7 @@ if( Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m' ) {
 # Load ALM function
 source(paste0(rFuncs, "functions_als.r"))
 source(paste0(rFuncs, "functions_bayes.r"))
-source( paste0(rFuncs, '/tfunctions.r') )
+source( paste0(rFuncs, 'tfunctions.r') )
 #### 
 
 #### 
@@ -14,9 +14,15 @@ source( paste0(rFuncs, '/tfunctions.r') )
 load(paste0(inPath, "YX.rda"))
 ####
 
+#### Maxim Likelihood
+B = mlm.ALS(Y, X)
+dim(B)
+save(B, file=paste0('mlikTradeConf.rda'))
+####
+
 #### MCMC 
 # mcmc function parameters
-NS = 7500 ; NB = 500 ; sdens = 100 ; plot = TRUE
+NS = 5000 ; NB = 500 ; sdens = 100 ; plot = TRUE
 seed = 6886 ; rstart = FALSE
 # output name
 fname="tensorTradeConf" 

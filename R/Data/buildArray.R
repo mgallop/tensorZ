@@ -23,14 +23,11 @@ dirDyad$matlConfStd = ( dirDyad$matlConf - mean( dirDyad$matlConf ) ) / sd( dirD
 
 ####
 # Set up array for endogenous covariates
+source(paste0(rFuncs, 'mltrHelpers.R'))
 
 # Cast into array format
-expArr = acast(dirDyad, i ~ j ~ t, value.var='exportsLog')
-confArr = acast(dirDyad, i ~ j ~ t, value.var='matlConfStd')
-
-# Replace diagonal elements with zeros
-expArr[is.na(expArr)] = 0
-confArr[is.na(confArr)] = 0
+expArr = castArray(dirDyad, 'exportsLog')
+confArr = castArray(dirDyad, 'matlConfStd')
 
 # Combine arrays
 Z = array( dim=append( dim(expArr), 2, after=2 ) )
@@ -54,38 +51,18 @@ for( var in 1:dim(ZT)[3] ){
 Y = Z[,,,-1]
 
 # Combine relational covariates into one array
-Xendo = array( dim=append( dim(Y), 3, after=3 ) )
-Xendo[,,,1,] = ZM[,,,-dim(Z)[4]]
-Xendo[,,,2,] = ZR[,,,-dim(Z)[4]]
-Xendo[,,,3,] = ZT[,,,-dim(Z)[4]]
+X = array( dim=append( dim(Y), 3, after=3 ) )
+X[,,,1,] = ZM[,,,-dim(Z)[4]]
+X[,,,2,] = ZR[,,,-dim(Z)[4]]
+X[,,,3,] = ZT[,,,-dim(Z)[4]]
 ####
 
 ####
 # Create arrays for exogenous covariates
-source(paste0(rFuncs, 'mltrHelpers.R'))
-ptaArr = acast(dirDyad, i ~ j ~ t, value.var='ptaCnt')
-ptaArr[is.na(ptaArr)] = 0
-ptaX = createRelCovar(ptaArr)
-distArr = acast(dirDyad, i ~ j ~ t, value.var='minDistLog')
-distArr[is.na(distArr)] = 0
-distX = createRelCovar(distArr)
+ptaX = prepMLTR(dirDyad, 'ptaCnt', TRUE, dim(Z)[4])
+distX = prepMLTR(dirDyad, 'minDistLog', TRUE, dim(Z)[4])
 
-# Account for lag
-ptaX = ptaX[,,,-dim(Z)[4]]
-distX = distX[,,,-dim(Z)[4]]
 
-# Include in equations for both matlconflict and exports
-tmp = array(dim=dim(Xendo))
-tmp[,,1,,] = ptaX; tmp[,,2,,] = ptaX
-ptaX = tmp
-tmp[,,1,,] = distX; tmp[,,2,,] = distX
-distX = tmp
-
-# Add exogenous covariates to X array
-X = array( dim = append(dim(Xendo), 3, after=4) )
-X[,,,,1,] = Xendo
-X[,,,,2,] = ptaX
-X[,,,,3,] = distX
 ####
 
 ####
@@ -103,16 +80,19 @@ dimnames(X)[[5]] = c('endo', 'pta', 'dist')
 dimnames(X)[[6]] = dimnames(Y)[[4]]
 
 # Finalize arrays
-dnX = dimnames(X)
-X = aperm( apply(X, c(1,2,5,6), 'c'), c(2,3,1,4,5) )
-dimnames(X)[1:2] = dnX[1:2]
-dimnames(X)[[4]] = dnX[[5]]
-dimnames(X)[[3]] = c( outer( dnX[[3]], dnX[[4]], paste0 ) )
 
-dnY = dimnames(Y)
-Y = array(Y, dim=append( dim(Y), c(1), after=3 ) )
-dimnames(Y)[1:3] = dnY[1:3]
-dimnames(Y)[[5]] = dnY[[4]]
+
+# # Finalize arrays
+# dnX = dimnames(X)
+# X = aperm( apply(X, c(1,2,5,6), 'c'), c(2,3,1,4,5) )
+# dimnames(X)[1:2] = dnX[1:2]
+# dimnames(X)[[4]] = dnX[[5]]
+# dimnames(X)[[3]] = c( outer( dnX[[3]], dnX[[4]], paste0 ) )
+
+# dnY = dimnames(Y)
+# Y = array(Y, dim=append( dim(Y), c(1), after=3 ) )
+# dimnames(Y)[1:3] = dnY[1:3]
+# dimnames(Y)[[5]] = dnY[[4]]
 
 ## save 
 save(Y, X, file=paste0(inPath, "YX.rda"))

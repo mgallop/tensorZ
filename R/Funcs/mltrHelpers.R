@@ -1,3 +1,10 @@
+# Cast directed dyadic variable into array
+castArray = function(dyadData, var){
+	arr = acast(dyadData, i ~ j ~ t, value.var=var)
+	arr[is.na(arr)] = 0	
+	return(arr)
+}
+
 # Creates relational covariate matrix for single variable array
 createRelCovar = function(arr){
 	main = arr
@@ -10,5 +17,13 @@ createRelCovar = function(arr){
 	X[,,1,] = main
 	X[,,2,] = recip
 	X[,,3,] = trans
+	return(X)
+}
+
+# Prep data for mltr
+prepMLTR = function(dyadData, var, lag = TRUE, tDim){
+	arr = castArray(dyadData, var)
+	X = createRelCovar(arr)
+	if(lag){ X = X[,,,-tDim] }
 	return(X)
 }
