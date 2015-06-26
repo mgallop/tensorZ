@@ -59,9 +59,17 @@ X[,,,3,] = ZT[,,,-dim(Z)[4]]
 
 ####
 # Create arrays for exogenous covariates
-ptaX = prepMLTR(dirDyad, 'ptaCnt', TRUE, dim(Z)[4])
-distX = prepMLTR(dirDyad, 'minDistLog', TRUE, dim(Z)[4])
+ptaX = prepMLTR(var='ptaCnt', incMain=TRUE, incRecip=FALSE, incTrans=TRUE)
+distX = prepMLTR(var='minDistLog', incMain=TRUE, incRecip=FALSE, incTrans=FALSE)
+# allyX = prepMLTR(var='ally', incMain=TRUE, incRecip=FALSE, incTrans=TRUE)
+i_polX = prepMLTR(var='i_polity', incMain=TRUE, incRecip=FALSE, incTrans=FALSE)
+i_gdpLogX = prepMLTR(var='i_gdpLog', incMain=TRUE, incRecip=FALSE, incTrans=FALSE)
+i_popLogX = prepMLTR(var='i_popLog', incMain=TRUE, incRecip=FALSE, incTrans=FALSE)
+i_wrldExpLogX = prepMLTR(var='i_wrldExpLog', incMain=TRUE, incRecip=FALSE, incTrans=FALSE)
+####
 
+####
+# Combine into X array across third dimension
 
 ####
 
