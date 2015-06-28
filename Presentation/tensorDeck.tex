@@ -1,0 +1,130 @@
+%!TEX TS-program = xelatex
+\documentclass[10pt, compress]{beamer}
+
+\usetheme[usetitleprogressbar]{m}
+
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage[scale=2]{ccicons}
+\usepackage{color}
+
+\graphicspath{{Graphics/}}
+
+\title[Tensors]{\textsc{Relax, Tensors Are Here...with Exogenous Covariates}}
+\author[Hoff, Minhas, \& Ward]{Peter D. Hoff, Shahryar Minhas, \& Michael D. Ward} 
+\date{\today}
+
+\begin{document}
+\frame{\titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+  \frametitle{Model Specification}
+  \vspace{-5mm}
+  \begin{itemize}
+  \item Dependent variables: Log(Exports) and Stdzed(Material Conflict). 
+  \item Direct ($i$), reciprocal ($ji$) and transitive ($ijk$) 1 month lags of these included as IVs.
+  \item Exogenous Covariates:
+    \begin{itemize}
+    \item Number of Preferential Trade Agreements (PTA) between $i$ and $j$ (this is an undirected, yearly level variable). Direct and transitive version of this variable included as covariates.
+    \item Presence of a defensive alliance relationship between $i$ and $j$ (undirected, yearly level). Direct and transitive versions.
+    \item Centroid distance between $i$ and $j$ (directed). Direct version.
+    \item Polity, monthly level variable. Polity of sender included.
+    \item Log(GDP), yearly level variable but imputed at the monthly level. GDP of sender.
+    \item Log(Population), yearly level variable but imputed at the monthly level. Population of sender.
+    \item Log(Total Exports to any country), monthly level variable. Exports of sender.
+    \end{itemize}
+  \end{itemize}    
+} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+  \frametitle{Sample \& Data}
+  \begin{itemize}
+  \item  Our sample is comprised of 161 countries over the period of March 2001 to December 2014
+  \item Data sources:
+  \begin{itemize}
+    \item Exports: \href{http://data.imf.org/?sk=8aa6eb7c-598b-4d3b-82f4-adab95d23145&dsId=DS_1414779485682}{\textcolor{blue}{IMF Direction of Trade Statistics}}
+    \item Material Conflict: ICEWS
+    \item PTA: \href{http://www.designoftradeagreements.org/}{\textcolor{blue}{Design of Trade Agreements Database}}
+    \item Alliance: \href{http://www.correlatesofwar.org/news/alliances-data-set-v4-1-available-1}{\textcolor{blue}{Correlates of War}}
+    \item Distance: \href{http://nils.weidmann.ws/projects/cshapes}{\textcolor{blue}{cshapes}}
+    \item Polity: \href{http://www.systemicpeace.org/polity/polity4.htm}{\textcolor{blue}{Polity IV Project}}
+    \item GDP, Population: \href{https://www.imf.org/external/pubs/ft/weo/2014/02/weodata/index.aspx}{\textcolor{blue}{IMF World Economic Outlook Database}}
+  \end{itemize}
+  \end{itemize}    
+} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+  \frametitle{Modeling Approach}
+  \begin{itemize}
+  \item Multilinear tensor regression framework
+  \item MCMC run for 800 iterations with first 600 used as burn-in\footnote{Using this many datapoints takes time the MCMC will keep running for another 4200 iterations so these results are preliminary, but trace plots at the end of this pdf look stable after 600 iterations}
+  \item The model has the following form:
+  \begin{align*}
+  \textbf{Y} = \textbf{X} \times \{\boldsymbol{\beta_{1}}, \boldsymbol{\beta_{2}}, \boldsymbol{\beta_{3}} \} + \textbf{E}
+  \end{align*}
+  \item \textbf{Y} is a $161 \times 161 \times 2 \times 165$ array
+  \item \textbf{X} is a $161 \times 161 \times 13 \times 165$ array, where each of the 13 variables is lagged by one month
+  \end{itemize}    
+} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+\frametitle{$\boldsymbol{\beta_{1}}$ \& $\boldsymbol{\beta_{2}}$, Sig. $+$ shown, $\alpha = 0.01$}
+  \vspace{-15mm}
+  \begin{figure}[ht]
+  \centering
+    \begin{tabular}{c}
+      \includegraphics[width=1\textwidth]{net.pdf} \\
+      \includegraphics[width=.9\textwidth]{map.pdf}
+    \end{tabular}
+  \end{figure}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+\frametitle{$\boldsymbol{\beta_{3}}$}
+  \centering
+  \resizebox{1\textwidth}{!}{\input{Graphics/coef.tex}}  
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+\frametitle{Aggregate Performance \& RMSE by i-j}
+  \input{Graphics/rsq.tex}
+  \vspace*{-.3in}
+  \begin{figure}[ht]
+  \centering
+    \begin{tabular}{cc}
+      \includegraphics[width=.45\textwidth]{expiperf.pdf} & 
+      \includegraphics[width=.45\textwidth]{mconfiperf.pdf}
+    \end{tabular}
+  \end{figure}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+\frametitle{Trace Plots for $\boldsymbol{\beta_{3}}$}
+  \centering
+  \includegraphics[width=1\textwidth]{trace.pdf}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\plain{Next Steps?}
+
+\end{document}

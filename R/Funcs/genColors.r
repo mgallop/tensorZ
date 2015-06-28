@@ -20,10 +20,10 @@ ccols = rgb( slon^2,slat^2,(1-sqrt(slon*slat))^2)
 
 # Generate legend map
 if(genCntryMap){
-	mapCol = ccols[match(cmap$ISO1AL3, cntries)]
+	mapCol = ccols[match(wmap$cname, cntries)]
 	mapCol[is.na(mapCol)] = 'grey'
 	fname=paste0(outPath, 'map.pdf')	
 	pdf(file=fname, width=8, height=4)
-	plot(cmap, col=mapCol)
+	plot(wmap, col=mapCol)
 	dev.off()
 }
