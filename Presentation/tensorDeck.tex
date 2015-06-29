@@ -5,6 +5,7 @@
 
 \usepackage{booktabs}
 \usepackage{tikz}
+\usepackage{dcolumn}
 \usepackage[scale=2]{ccicons}
 \usepackage{color}
 
@@ -65,7 +66,7 @@
   \frametitle{Modeling Approach}
   \begin{itemize}
   \item Multilinear tensor regression framework
-  \item MCMC run for 800 iterations with first 600 used as burn-in\footnote{Using this many datapoints takes time the MCMC will keep running for another 4200 iterations so these results are preliminary, but trace plots at the end of this pdf look stable after 600 iterations}
+  \item MCMC run for 1300 iterations with first 600 used as burn-in\footnote{Using this many datapoints takes time the MCMC will keep running for another 3700 iterations so these results are preliminary, but trace plots at the end of this pdf look stable after 600 iterations}
   \item The model has the following form:
   \begin{align*}
   \textbf{Y} = \textbf{X} \times \{\boldsymbol{\beta_{1}}, \boldsymbol{\beta_{2}}, \boldsymbol{\beta_{3}} \} + \textbf{E}
@@ -122,6 +123,43 @@
 \frametitle{Trace Plots for $\boldsymbol{\beta_{3}}$}
   \centering
   \includegraphics[width=1\textwidth]{trace.pdf}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+  \frametitle{Comparison with directed dyadic model}
+  \begin{itemize}
+  \item Here I run a similar analysis using the standard directed dyadic (dd) framework
+  \item The covariates for both models are the same 
+  \item Instead of taking a vector autoregression approach, I just run two separate directed dyadic linear regressions
+  \end{itemize}
+} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+  \frametitle{dd Coefficient Results, std. errors in (), $^*$ sig. at $p< 0.05 $ }
+  \vspace{-.3in}
+  \tiny{\input{Graphics/dyadcoef.tex}}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+\frametitle{DD Aggregate Performance \& RMSE by i-j}
+  \input{Graphics/dyadrsq.tex}
+  \vspace*{-.3in}
+  \begin{figure}[ht]
+  \centering
+    \begin{tabular}{cc}
+      \includegraphics[width=.45\textwidth]{dyadexpiperf.pdf} & 
+      \includegraphics[width=.45\textwidth]{dyadmconfiperf.pdf}
+    \end{tabular}
+  \end{figure}
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
