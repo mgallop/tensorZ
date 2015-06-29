@@ -55,7 +55,7 @@ aggPerf = round(aggPerf, 2)
 
 print.xtable(xtable(aggPerf), 
 	file=paste0(outPath, 'rsq.tex'),
-	include.rownames=FALSE, 
+	include.rownames=TRUE, 
 	sanitize.text.function=identity
 	)
 

@@ -58,7 +58,7 @@ aggPerf = round(aggPerf, 2)
 
 print.xtable(xtable(aggPerf), 
 	file=paste0(outPath, 'dyadrsq.tex'),
-	include.rownames=FALSE, 
+	include.rownames=TRUE, 
 	sanitize.text.function=identity
 	)
 ############################
