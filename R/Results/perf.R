@@ -73,30 +73,49 @@ for(var in 1:dim(perf)[3]){
 	meltPull = cbind(var = dimnames(perf)[[3]][var], meltPull)
 	ggData = rbind(ggData, meltPull)
 }
-# ggData$var = makeLabel(ggData$var)
+
+# Add labels for DV
+ggData$var = char(ggData$var)
+ggData$var[ggData$var=='exports'] = 'Log(Exports)'
+ggData$var[ggData$var=='matlConf'] = 'Std(Matl. Conf.)'
 ggData$var = factor(ggData$var, levels=unique(ggData$var))
 
+# Replace country name with ISO abbreviation
+cntry = c(char(ggData$Var1), char(ggData$Var2)) %>% unique() %>% data.frame()
+names(cntry) = 'cname'; cntry$iso = countrycode(cntry$cname, 'country.name', 'iso3c')
+ggData$Var1 = cntry$iso[match(ggData$Var1, cntry$cname)]
+ggData$Var2 = cntry$iso[match(ggData$Var2, cntry$cname)]
+
 tilePerf = function(dv){
-	ggIPerf=ggplot(ggData[ggData$var==dv,], aes(x=Var1, y=Var2, fill=value)) 
+	# Subset to relev var
+	ggData = ggData[ggData$var==dv,]
+	# Add cat indicator for RMSE
+	ggData$valueCat = ggData$value %>% cut(., 
+		breaks=quantile(., probs=seq(0,1,100/9/100)), 
+		include.lowest=TRUE, ordered_result=TRUE, dig.lab=1)
+	# Plot
+	ggIPerf=ggplot(ggData, aes(x=Var1, y=Var2, fill=valueCat)) 
 	ggIPerf=ggIPerf + xlab('') + ylab('')
 	ggIPerf=ggIPerf + geom_tile(colour='lightgrey')
-	ggIPerf=ggIPerf + scale_fill_gradient2(name='', low='white', high='red')
+	# ggIPerf=ggIPerf + scale_fill_gradient2(name='', low='white', high='red')
+	ggIPerf=ggIPerf + scale_fill_brewer(name='', palette='Reds')	
 	ggIPerf=ggIPerf + scale_x_discrete(expand=c(0,0)) + scale_y_discrete(expand=c(0,0))
+	ggIPerf=ggIPerf + facet_wrap(~var)
 	ggIPerf=ggIPerf + theme(
 		axis.ticks=element_blank(), 
-		legend.position='top', legend.key.width=unit(2,'cm'),
+		legend.position='right', legend.key.width=unit(.1,'cm'), legend.key.height=unit(1,'cm'),
 		panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-		axis.text.x = element_text(angle=45, hjust=1, size=4),
-		axis.text.y = element_text(size=4)
+		axis.text.x = element_text(angle=45, hjust=1, size=2),
+		axis.text.y = element_text(size=2)
 		)
 	return(ggIPerf)
 }
 
-ePerf=tilePerf('exports')
+ePerf=tilePerf('Log(Exports)')
 fname=paste0(outPath, 'expiperf.pdf')	
-ggsave(filename=fname, plot=ePerf, width=10, height=10)
+ggsave(filename=fname, plot=ePerf, width=7, height=5)
 
-mPerf=tilePerf('matlConf')
+mPerf=tilePerf('Std(Matl. Conf.)')
 fname=paste0(outPath, 'mconfiperf.pdf')	
-ggsave(filename=fname, plot=mPerf, width=10, height=10)
+ggsave(filename=fname, plot=mPerf, width=7, height=5)
 ############################
