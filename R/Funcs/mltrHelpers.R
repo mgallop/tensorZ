@@ -69,7 +69,7 @@ getScenVals = function(
 		voiMelt = melt(data[,,v,]) %>% na.omit() # double loop speed is fine, melt is what slows things down
 		vals[[v]] = list( 
 			mean(voiMelt[,'value']),
-			quantile(voiMelt[,'value'], probs=seq(0, 1, .01) )
+			quantile(voiMelt[,'value'], probs=seq(0, 1, .05) )
 			)
 	}
 
