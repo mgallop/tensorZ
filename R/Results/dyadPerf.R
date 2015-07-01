@@ -79,7 +79,7 @@ rmseTime = lapply(dats, function(dat){
 
 # Combine for gg
 ggData = do.call('rbind', rmseTime)
-cnt = ( length(cntries)*length(cntries) ) - length(cntries)
+cnt = ( length(cntries)^2 ) - length(cntries)
 ggData$var = c( 
 	rep('Log(Exports)', cnt), 
 	rep('Std(Matl. Conf.)', cnt)
@@ -89,6 +89,13 @@ ggData$var = c(
 toPlot = c('Log(Exports)', 'Std(Matl. Conf.)')
 ggData = ggData[which(ggData$var %in% toPlot ),]
 ggData$var = factor(ggData$var, levels=toPlot)
+
+############################
+# Save for use in perfCompare.R
+fname = paste0('~/Dropbox/Research/WardProjects/tensorZ/Data/fromModel/rmseDyad.rda')
+perfDyad = ggData
+save(perfDyad, file=fname)
+############################
 
 # Replace country name with ISO abbreviation
 cntry = c(char(ggData$source), char(ggData$target)) %>% unique() %>% data.frame()

@@ -50,8 +50,8 @@ covars$ivClean[covars$iv=='pop_ij'] = 'Log(Population)$_{i, t-1}$'
 covars$ivClean[covars$iv=='wrldexp_ij'] = 'Log(Total~Exports)$_{i, t-1}$'
 
 # Run substantive effects for
-voi = 'pta_ijk'
-for(voi in covars$iv){
+voi = 'pta_ij'
+for(voi in covars$iv[1:9]){
 ############################
 
 ############################
@@ -118,7 +118,7 @@ ggData$dv[ggData$dv=='exports'] = 'Log(Exports)'
 ggData$dv[ggData$dv=='matlConf'] = 'Stdz(Matl. Conf.)'
 
 # Plot
-ggEff = ggplot(ggData, aes(x=var, y=mu, color=dv, fill=dv, ymin=q95Lo, ymax=q95Hi))
+ggEff = ggplot(ggData, aes(x=var, y=mu, ymin=q95Lo, ymax=q95Hi))
 ggEff = ggEff + geom_line() + geom_ribbon(alpha=0.3)
 ggEff = ggEff + geom_ribbon(aes(ymin=q90Lo, ymax=q90Hi), alpha=0.5)
 ggEff = ggEff + facet_wrap(~dv, nrow=2, scales='free_y')
@@ -130,6 +130,7 @@ ggEff = ggEff + theme(
 	)
 
 # Add histogram
+# Get voi data from X array
 vOrig = X[,,voi,] 
 for(ii in 1:dim(vOrig)[3]){
 	diag(vOrig[,,ii]) = NA 
@@ -138,15 +139,30 @@ for(ii in 1:dim(vOrig)[3]){
 	}
 }
 vOrig = vOrig %>% melt(.) %>% na.omit(.)
-vHist = ggplot(data=vOrig, aes(x=value)) + geom_density() 
-vHist = vHist + ylab('') + xlab(xlab(covars$ivClean[covars$iv==voi]))
-vHist = vHist + theme(panel.grid = element_blank(), axis.ticks = element_blank())
+
+# Add some coloring to designate interquartile and 90$ of distribution
+tmp = density( vOrig$value )
+vDense = data.frame( x=tmp$x, y=tmp$y )
+vDense$qIQ = vDense$x >= quantile( vOrig$value, 0.25 ) & vDense$x <= quantile(vOrig$value, 0.75)
+vDense$q90 = vDense$x >= quantile( vOrig$value, 0.05 ) & vDense$x <= quantile(vOrig$value, 0.90)
+
+# Plot histogram
+ggDense = ggplot() + xlab(covars$ivClean[covars$iv==voi]) + ylab('')
+ggDense = ggDense + geom_line(data=vDense, aes(x=x,y=y))
+ggDense = ggDense + geom_ribbon(data=subset(vDense,q90),
+  aes(x=x,ymax=y),ymin=0,alpha=0.5)
+ggDense = ggDense + geom_ribbon(data=subset(vDense,qIQ),
+  aes(x=x,ymax=y),ymin=0,alpha=0.9)
+ggDense = ggDense + theme(
+	legend.position='none', 
+	panel.grid = element_blank(), 
+	axis.ticks = element_blank())
 
 # Arrange and save plots
 loadPkg('gridExtra')
 fname=paste0(outPath, voi, '_effect.tex')
 tikz(fname, width=4, height=7, standAlone = FALSE)
-grid.arrange(ggEff, vHist, ncol=1, nrow=2, heights=c(4,1))
+grid.arrange(ggEff, ggDense, ncol=1, nrow=2, heights=c(4,1))
 dev.off()
 ############################
 }

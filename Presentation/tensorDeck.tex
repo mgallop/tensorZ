@@ -104,13 +104,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \frame
 {
-\frametitle{Effect of PTAs}
-  \vspace{-.35in}
+\frametitle{Endog. Effects of Log(Exports)}
+  \vspace{-.3in}
   \begin{figure}[ht]
   \centering
-    \begin{tabular}{cc}
-      \resizebox{.45\textwidth}{!}{\input{Graphics/pta_ijk_effect.tex}}  &
-      \resizebox{.45\textwidth}{!}{\input{Graphics/pta_ijk_effect.tex}}  
+    \begin{tabular}{ccc}
+      \hspace{-.63in}
+      \resizebox{.38\textwidth}{!}{\input{Graphics/exp_ij_effect.tex}}  &
+      \resizebox{.38\textwidth}{!}{\input{Graphics/exp_ji_effect.tex}}  &
+      \resizebox{.38\textwidth}{!}{\input{Graphics/exp_ijk_effect.tex}}  
     \end{tabular}
   \end{figure}
 }
@@ -119,15 +121,30 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \frame
 {
-\frametitle{Effect of PTAs}
+\frametitle{Endog. Effects of Std(Matl. Conf.)}
   \vspace{-.3in}
   \begin{figure}[ht]
   \centering
     \begin{tabular}{ccc}
       \hspace{-.63in}
-      \resizebox{.38\textwidth}{!}{\input{Graphics/pta_ijk_effect.tex}}  &
-      \resizebox{.38\textwidth}{!}{\input{Graphics/pta_ijk_effect.tex}}  &
-      \resizebox{.38\textwidth}{!}{\input{Graphics/pta_ijk_effect.tex}}  
+      \resizebox{.38\textwidth}{!}{\input{Graphics/mconf_ij_effect.tex}}  &
+      \resizebox{.38\textwidth}{!}{\input{Graphics/mconf_ji_effect.tex}}  &
+      \resizebox{.38\textwidth}{!}{\input{Graphics/mconf_ijk_effect.tex}}  
+    \end{tabular}
+  \end{figure}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+\frametitle{Effect of PTAs: Direct and Transitive}
+  \vspace{-.35in}
+  \begin{figure}[ht]
+  \centering
+    \begin{tabular}{cc}
+      \resizebox{.45\textwidth}{!}{\input{Graphics/pta_ij_effect.tex}}  &
+      \resizebox{.45\textwidth}{!}{\input{Graphics/pta_ijk_effect.tex}}  
     \end{tabular}
   \end{figure}
 }
@@ -182,6 +199,36 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \frame
 {
+  \frametitle{Parameter Estimate Comparisons: MLTR \& dd}
+  \footnotesize{+ = sig at 95\% interval and positive} \\
+  \footnotesize{--\; = sig at 95\% interval and negative}
+  
+  \centering
+  \begin{tabular}{l | cc | cc}
+~ & \multicolumn{2}{c}{Log(Exports)} & \multicolumn{2}{c}{Std(Matl. Conf.)} \\
+\hline\hline
+~ & MLTR & Dyadic & MLTR & Dyadic \\
+\hline
+  Log(Exports)$_{ij, t-1}$ & + & + & -- & -- \\
+  Std(Matl. Conf.)$_{ij, t-1}$ & -- &  & + & + \\
+  Log(Exports)$_{ji, t-1}$ & + & + & -- &  \\
+  Std(Matl. Conf.)$_{ji, t-1}$ &  &  & + & + \\
+  Log(Exports)$_{ijk, t-1}$ & + & + & + & + \\
+  Std(Matl. Conf.)$_{ijk, t-1}$ &  & -- & + & -- \\
+  PTAs$_{ij, t-1}$ & + & + & + &  \\
+  PTAs$_{ijk, t-1}$ & -- & -- & -- & -- \\
+  Distance$_{ij, t-1}$ & -- & -- & -- & -- \\
+  Polity$_{i, t-1}$ & + & + & + & -- \\
+  Log(GDP)$_{i, t-1}$ & + & + & -- & + \\
+  Log(Population)$_{i, t-1}$ & -- & -- & + & + \\
+  Log(Total~Exports)$_{i, t-1}$ & + & + & + & -- 
+  \end{tabular}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
 \frametitle{DD Aggregate Performance \& RMSE by i-j}
   \input{Graphics/dyadrsq.tex}
   \begin{figure}[ht]
@@ -192,6 +239,41 @@
       \includegraphics[width=.6\textwidth]{dyadmconfiperf.pdf}
     \end{tabular}
   \end{figure}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+  \frametitle{Performance Comparisons: MLTR \& DD}
+
+\begin{itemize}
+\item Across all cases the R$^{2}$ is higher using the MLTR approach for both exports (95\% v. 89\%) and matl. conf. (28\% v. 26\%)
+\item MLTR has a lower RMSE in $\approx$ 57\% of cases for Log(Exports)
+\item MLTR has a lower RMSE in $\approx$ 80\% of cases for Std(Matl. Conf.)
+\item Across all cases the RMSE is lower using the MLTR approach for both exports (2.32 v. 2.37) and matl. conf. (0.85 v. 0.86)
+\item However, as shown by the aggregate RMSE statistics right above, the differences in performance are small
+\item Additionally, in the next two slides I break out the performance, in terms of RMSE, by showing the results for OECD--OECD and Not OECD--Not OECD countries
+\end{itemize}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+  \frametitle{Performance on OECD--OECD countries: Log(Exports)}
+  \centering
+  \includegraphics[width=1\textwidth]{oecdexpiperf.pdf}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame
+{
+  \frametitle{Performance on OECD--OECD countries: Std(Matl. Conf.)}
+  \centering
+  \includegraphics[width=1\textwidth]{oecdconfiperf.pdf}
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

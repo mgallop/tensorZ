@@ -83,6 +83,16 @@ ggData$var[ggData$var=='exports'] = 'Log(Exports)'
 ggData$var[ggData$var=='matlConf'] = 'Std(Matl. Conf.)'
 ggData$var = factor(ggData$var, levels=unique(ggData$var))
 
+############################
+# Save for use in perfCompare.R
+fname = paste0('~/Dropbox/Research/WardProjects/tensorZ/Data/fromModel/rmseMLTR.rda')
+perfMltr = ggData
+perfMltr = perfMltr[perfMltr$Var1 != perfMltr$Var2,]
+names(perfMltr) = c('var', 'source', 'target', 'rmse')
+perfMltr = perfMltr[,c('source', 'target', 'rmse', 'var')]
+save(perfMltr, file=fname)
+############################
+
 # Replace country name with ISO abbreviation
 cntry = c(char(ggData$Var1), char(ggData$Var2)) %>% unique() %>% data.frame()
 names(cntry) = 'cname'; cntry$iso = countrycode(cntry$cname, 'country.name', 'iso3c')
