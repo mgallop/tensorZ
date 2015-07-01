@@ -1,3 +1,4 @@
+#### Data prep
 # Cast directed dyadic variable into array
 castArray = function(dyadData, var){
 	library(reshape2)
@@ -43,4 +44,73 @@ prepMLTR = function(
 	X = createRelCovar(arr, incMain, incRecip, incTrans)
 	if(lag){ X = X[,,,-tDim,drop=FALSE] }
 	return(X)
+}
+
+
+#### Posterior analysis
+# array of data, assumes four dimensional array
+# vars/times used for which we want summary stats
+# infoMat contains information on directed/undirected var
+getScenVals = function(
+	data=X, vars, 
+	time, infoMat){
+
+	# Calculate values from array
+	vals = vector("list", length(vars)) ; names(vals) = vars
+	for(v in vars){
+		for(t in time){
+			x = data[,,v,t]
+			diag(x) = NA
+			if(infoMat[v,'directed']){ x[lower.tri(x)] = NA }
+			data[,,v,t] = x }
+
+		# Summary stats
+		library(reshape2)
+		voiMelt = melt(data[,,v,]) %>% na.omit() # double loop speed is fine, melt is what slows things down
+		vals[[v]] = list( 
+			mean(voiMelt[,'value']),
+			quantile(voiMelt[,'value'], probs=seq(0, 1, .01) )
+			)
+	}
+
+	return(vals)
+}
+
+# Assembles scenario array
+# varToVary is a single character item
+# valsForScen is a list produced by getScenVals function with numeric values for variables to be used in scenario
+# dim12names are the names for the first two dimensions of the array, typically units (e.g., countries)
+# dim3names for the third dimension, typically IVs
+getScenArray = function(varToVary, valsForScen, dim12names, dim3names){
+	# Dimensions of scen matrix
+	dimScen = c(length(dim12names), length(dim12names), length(dim3names))
+	# Pull out scenario value numbers
+	oVals = lapply(valsForScen[setdiff(names(valsForScen), varToVary)], function(x) x[1]) %>% unlist()
+	allVals = valsForScen[[varToVary]][[2]] %>% 
+		unique() %>% 
+		lapply(., function(v){
+		pos = which(varToVary == dim3names)
+		upd = append(oVals, v, after=(pos-1)) 
+		names(upd)[pos] = varToVary
+		return(upd) 
+		})
+
+	# Empty array for scenario to fill in
+	scenArray = array( 
+		dim=c(dimScen, length(allVals)), 
+		dimnames=list( dim12names, dim12names, dim3names, NULL ) 
+		)
+
+	# Fill in scenario array
+	for(ii in 1:dim(scenArray)[4] ){ 
+		tmp = array(rep( allVals[[ii]], each=length(dim12names)^2 ), dim=dimScen)
+		scenArray[,,,ii] = tmp
+	}
+
+	# Make diag zero
+	for(ii in 1:dim(scenArray)[3] ){
+		for(jj in 1:dim(scenArray)[4] ){
+			diag(scenArray[,,ii,jj]) = 0 } }
+
+	return(scenArray)
 }

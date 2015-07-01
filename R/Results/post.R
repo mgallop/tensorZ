@@ -15,7 +15,7 @@ outPath = '~/Research/WardProjects/tensorZ/Presentation/Graphics/'
 ############################
 # Load mcmc mult results
 # Set burn in
-burn = 600
+burn = 1200
 
 # Add labels
 cntries=dimnames(Y)[[1]]

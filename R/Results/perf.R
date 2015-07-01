@@ -13,6 +13,9 @@ outPath = '~/Research/WardProjects/tensorZ/Presentation/Graphics/'
 ############################
 
 ############################
+# Burn
+burn = 1200
+
 # Add labels
 cntries=dimnames(Y)[[1]]
 dvs = dimnames(Y)[[3]]
@@ -30,10 +33,10 @@ dimnames(BPS[[3]])[[2]] = ivs
 
 ############################
 # Calculate posterior means for B
-getPost = function(beta, burn=-(1:600)){
-	b1 = apply(beta[[1]][,,burn], c(1:2), mean)
-	b2 = apply(beta[[2]][,,burn], c(1:2), mean)
-	b3 = apply(beta[[3]][,,burn], c(1:2), mean)
+getPost = function(beta, toBurn=-(1:burn)){
+	b1 = apply(beta[[1]][,,toBurn], c(1:2), mean)
+	b2 = apply(beta[[2]][,,toBurn], c(1:2), mean)
+	b3 = apply(beta[[3]][,,toBurn], c(1:2), mean)
 	return( list(b1, b2, b3) )
 }
 

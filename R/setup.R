@@ -40,6 +40,7 @@ set.seed(seed)
 
 # File with helpful functions
 source(paste0(rFuncs, 'sqlHelpers.R'))
+source(paste0(rFuncs, 'mltrHelpers.R'))
 
 # Session info
 sessionInfo()
