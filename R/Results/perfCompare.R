@@ -6,6 +6,9 @@ if( Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m' ) {
 load(paste0(outPath, 'rmseDyad.rda')) # perfDyad
 load(paste0(outPath, 'rmseMLTR.rda')) # perfMltr
 
+# wkrspc params
+printPlot = FALSE
+
 # Change outpath to presentation
 outPath = '~/Research/WardProjects/tensorZ/Presentation/Graphics/'
 ############################
@@ -54,30 +57,26 @@ lapply(perfL, function(d){
 # are there diffs in mltr perf by OECD and not?
 perfTile = melt(perf, id=c('source','target','var','id','mltrW'))
 
-tilePerf = function(dv, oecd=TRUE){
+# OECD countries
+oecdCntries = c('AUSTRALIA', 'AUSTRIA', 'BELGIUM', 'CANADA', 'CHILE', 'CZECH REPUBLIC', 'DENMARK', 'ESTONIA', 
+	'FINLAND', 'FRANCE', 'GERMANY', 'GREECE', 'HUNGARY', 'ICELAND', 'IRELAND', 'ISRAEL', 'ITALY', 'JAPAN', 
+	'KOREA, REPUBLIC OF', 'LUXEMBOURG', 'MEXICO', 'NETHERLANDS', 'NEW ZEALAND', 'NORWAY', 'POLAND', 'PORTUGAL', 'SLOVAKIA', 
+	'SLOVENIA', 'SPAIN', 'SWEDEN', 'SWITZERLAND', 'TURKEY', 'UNITED KINGDOM', 'UNITED STATES') %>% sort()
+allCntries = c(char(perfTile$source), char(perfTile$target)) %>% unique() %>% sort()
+notOecd = setdiff(allCntries, oecdCntries) %>% sort()
 
-	# Isolate to OECD countries?
-	oecdCntries = c('AUSTRALIA', 'AUSTRIA', 'BELGIUM', 'CANADA', 'CHILE', 'CZECH REPUBLIC', 'DENMARK', 'ESTONIA', 
-		'FINLAND', 'FRANCE', 'GERMANY', 'GREECE', 'HUNGARY', 'ICELAND', 'IRELAND', 'ISRAEL', 'ITALY', 'JAPAN', 
-		'KOREA, REPUBLIC OF', 'LUXEMBOURG', 'MEXICO', 'NETHERLANDS', 'NEW ZEALAND', 'NORWAY', 'POLAND', 'PORTUGAL', 'SLOVAKIA', 
-		'SLOVENIA', 'SPAIN', 'SWEDEN', 'SWITZERLAND', 'TURKEY', 'UNITED KINGDOM', 'UNITED STATES')
-	if(oecd){
-		perfTile = perfTile[perfTile$source %in% oecdCntries,]
-		perfTile = perfTile[perfTile$target %in% oecdCntries,]
+# tilePerf = function(dv, 
+# 	sCntries, tCtnries, 
+# 	sName, tName, 
+# 	sLabSize, tLabSize, 
+# 	lPos='right', lHeight=1){
 
-		perfTile$variable = char( perfTile$variable )
-		perfTile$variable[perfTile$variable=='rmseMltr'] = paste0('DV=', dv, ': Approach=MLTR: Sample=OECD')
-		perfTile$variable[perfTile$variable=='rmseDyad'] = paste0('DV=', dv, ': Approach=DD: Sample=OECD')
-	}
+	perfTile = perfTile[perfTile$source %in% sCntries,]
+	perfTile = perfTile[perfTile$target %in% tCtnries,]
 
-	if(!oecd){
-		perfTile = perfTile[!perfTile$source %in% oecdCntries,]
-		perfTile = perfTile[!perfTile$target %in% oecdCntries,]
-
-		perfTile$variable = char( perfTile$variable )
-		perfTile$variable[perfTile$variable=='rmseMltr'] = paste0('DV=', dv, ': Approach=MLTR: Sample=Not OECD')
-		perfTile$variable[perfTile$variable=='rmseDyad'] = paste0('DV=', dv, ': Approach=DD: Sample=Not OECD')
-	}
+	perfTile$variable = char( perfTile$variable )
+	perfTile$variable[perfTile$variable=='rmseMltr'] = paste0('DV=', dv, ': MLTR: ',sName,'-',tName)
+	perfTile$variable[perfTile$variable=='rmseDyad'] = paste0('DV=', dv, ': DD: ',sName,'-',tName)
 
 	# Replace country name with ISO abbreviation
 	cntry = c(char(perfTile$source), char(perfTile$target)) %>% unique() %>% data.frame()
@@ -91,43 +90,56 @@ tilePerf = function(dv, oecd=TRUE){
 	perfTile$valueCat = perfTile$value %>% cut(., 
 		breaks=quantile(., probs=seq(0,1,100/9/100)), 
 		include.lowest=TRUE, ordered_result=TRUE, dig.lab=1)
+	# Sort rows/cols
+	# perfTile$source = countrycode(sCntries, 'country.name', 'iso3c') %>% factor(perfTile$source, levels=.)
+	# perfTile$target = countrycode(tCtnries, 'country.name', 'iso3c') %>% rev() %>% factor(perfTile$source, levels=.)
+
 	# Plot	
-	ggIPerf=ggplot(perfTile, aes(x=source, y=target, fill=valueCat)) 
+	ggIPerf=ggplot(perfTile, aes(x=target, y=source, fill=valueCat)) 
 	ggIPerf=ggIPerf + xlab('') + ylab('')
 	ggIPerf=ggIPerf + geom_tile(colour='darkgrey')
 	# ggIPerf=ggIPerf + scale_fill_gradient2(name='', low='white', high='red')
 	ggIPerf=ggIPerf + scale_fill_brewer(name='', palette='Reds')	
-	ggIPerf=ggIPerf + scale_x_discrete(expand=c(0,0)) + scale_y_discrete(expand=c(0,0))
+	ggIPerf=ggIPerf + scale_x_discrete(expand=c(0,0), labels=)
+	ggIPerf=ggIPerf + scale_y_discrete(expand=c(0,0))
 	ggIPerf=ggIPerf + facet_wrap(~variable)
-	if(oecd){ggIPerf=ggIPerf + theme(
-			axis.ticks=element_blank(), 
-			legend.position='right', legend.key.width=unit(.1,'cm'), legend.key.height=unit(1,'cm'),
-			panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-			axis.text.x = element_text(angle=45, hjust=1, size=6),
-			axis.text.y = element_text(size=6)
-			)}
-	if(!oecd){ggIPerf=ggIPerf + theme(
-			axis.ticks=element_blank(), 
-			legend.position='right', legend.key.width=unit(.1,'cm'), legend.key.height=unit(1,'cm'),
-			panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-			axis.text.x = element_text(angle=45, hjust=1, size=3),
-			axis.text.y = element_text(size=3)
-			)}	
+	ggIPerf=ggIPerf + theme(
+		axis.ticks=element_blank(), 
+		legend.position=lPos, legend.key.width=unit(.1,'cm'), legend.key.height=unit(lHeight,'cm'),
+		panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+		axis.text.x = element_text(angle=45, hjust=1, size=tLabSize),
+		axis.text.y = element_text(size=sLabSize)
+		)
+	ggIPerf
 	return(ggIPerf)
 }
 
 loadPkg('gridExtra')
-oecdExpPerf=tilePerf('Log(Exports)', oecd=TRUE)
-otherExpPerf=tilePerf('Log(Exports)', oecd=FALSE)
+oecdExpPerf=tilePerf('Log(Exports)', sCntries=oecdCntries, tCtnries=oecdCntries, sName='OECD', tName='OECD', sLabSize=6, tLabSize=6)
+otherExpPerf=tilePerf('Log(Exports)', sCntries=notOecd, tCtnries=notOecd, sName='Not OECD', tName='Not OECD', sLabSize=3, tLabSize=3)
 fname=paste0(outPath, 'oecdexpiperf.pdf')	
-pdf(file=fname, width=14, height=10)
+if(printPlot){ pdf(file=fname, width=14, height=10) }
 grid.arrange(oecdExpPerf, otherExpPerf, nrow=2, ncol=1)
-dev.off()
+if(printPlot){ dev.off() }
 
-oecdConfPerf=tilePerf('Std(Matl. Conf.)', oecd=TRUE)
-otherConfPerf=tilePerf('Std(Matl. Conf.)', oecd=FALSE)
+oecdConfPerf=tilePerf('Std(Matl. Conf.)', sCntries=oecdCntries, tCtnries=oecdCntries, sName='OECD', tName='OECD', sLabSize=6, tLabSize=6)
+otherConfPerf=tilePerf('Std(Matl. Conf.)', sCntries=notOecd, tCtnries=notOecd, sName='Not OECD', tName='Not OECD', sLabSize=3, tLabSize=3)
 fname=paste0(outPath, 'oecdconfiperf.pdf')	
-pdf(file=fname, width=14, height=10)
+if(printPlot){ pdf(file=fname, width=14, height=10) }
 grid.arrange(oecdConfPerf, otherConfPerf, nrow=2, ncol=1)
-dev.off()
+if(printPlot){ dev.off() }
+############################
+
+############################
+# Further exploration
+usExpAll = tilePerf('Log(Exports)', sCntries='UNITED STATES', tCtnries=allCntries, sName='USA', tName='All', sLabSize=12, tLabSize=3, lPos='bottom', lHeight=.5)
+usExpOECD = tilePerf('Log(Exports)', sCntries='UNITED STATES', tCtnries=oecdCntries, sName='USA', tName='OECD', sLabSize=12, tLabSize=6, lPos='bottom', lHeight=.5)
+usExpNotOECD = tilePerf('Log(Exports)', sCntries='UNITED STATES', tCtnries=notOecd, sName='USA', tName='Not OECD', sLabSize=12, tLabSize=3, lPos='bottom', lHeight=.5)
+grid.arrange(usExpAll, usExpOECD, usExpNotOECD, nrow=3, ncol=1)
+
+grid.arrange(
+	tilePerf('Log(Exports)', sCntries='GHANA', tCtnries=allCntries, sName='GHN', tName='All', sLabSize=12, tLabSize=3, lPos='bottom', lHeight=.5), 
+	tilePerf('Log(Exports)', sCntries='GHANA', tCtnries=allCntries, sName='GHN', tName='All', sLabSize=12, tLabSize=3, lPos='bottom', lHeight=.5), 
+	tilePerf('Log(Exports)', sCntries='GHANA', tCtnries=allCntries, sName='GHN', tName='All', sLabSize=12, tLabSize=3, lPos='bottom', lHeight=.5), 
+	nrow=3, ncol=1)
 ############################
