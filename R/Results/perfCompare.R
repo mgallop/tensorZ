@@ -65,11 +65,13 @@ oecdCntries = c('AUSTRALIA', 'AUSTRIA', 'BELGIUM', 'CANADA', 'CHILE', 'CZECH REP
 allCntries = c(char(perfTile$source), char(perfTile$target)) %>% unique() %>% sort()
 notOecd = setdiff(allCntries, oecdCntries) %>% sort()
 
-# tilePerf = function(dv, 
-# 	sCntries, tCtnries, 
-# 	sName, tName, 
-# 	sLabSize, tLabSize, 
-# 	lPos='right', lHeight=1){
+dv='Log(Exports)'; sCntries=oecdCntries; tCtnries=oecdCntries; sName='OECD'; tName='OECD'; sLabSize=6; tLabSize=6; lPos='right'; lHeight=1
+
+tilePerf = function(dv, 
+	sCntries, tCtnries, 
+	sName, tName, 
+	sLabSize, tLabSize, 
+	lPos='right', lHeight=1){
 
 	perfTile = perfTile[perfTile$source %in% sCntries,]
 	perfTile = perfTile[perfTile$target %in% tCtnries,]
@@ -90,17 +92,14 @@ notOecd = setdiff(allCntries, oecdCntries) %>% sort()
 	perfTile$valueCat = perfTile$value %>% cut(., 
 		breaks=quantile(., probs=seq(0,1,100/9/100)), 
 		include.lowest=TRUE, ordered_result=TRUE, dig.lab=1)
-	# Sort rows/cols
-	# perfTile$source = countrycode(sCntries, 'country.name', 'iso3c') %>% factor(perfTile$source, levels=.)
-	# perfTile$target = countrycode(tCtnries, 'country.name', 'iso3c') %>% rev() %>% factor(perfTile$source, levels=.)
-
+	
 	# Plot	
 	ggIPerf=ggplot(perfTile, aes(x=target, y=source, fill=valueCat)) 
 	ggIPerf=ggIPerf + xlab('') + ylab('')
 	ggIPerf=ggIPerf + geom_tile(colour='darkgrey')
 	# ggIPerf=ggIPerf + scale_fill_gradient2(name='', low='white', high='red')
 	ggIPerf=ggIPerf + scale_fill_brewer(name='', palette='Reds')	
-	ggIPerf=ggIPerf + scale_x_discrete(expand=c(0,0), labels=)
+	ggIPerf=ggIPerf + scale_x_discrete(expand=c(0,0))
 	ggIPerf=ggIPerf + scale_y_discrete(expand=c(0,0))
 	ggIPerf=ggIPerf + facet_wrap(~variable)
 	ggIPerf=ggIPerf + theme(

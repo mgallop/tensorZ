@@ -57,7 +57,7 @@ ggTrace=ggTrace + theme(
 	)
 fname=paste0(outPath, 'trace.pdf')
 print( ggTrace )
-ggsave(filename=fname, plot=ggTrace, width=12, height=8)
+# ggsave(filename=fname, plot=ggTrace, width=12, height=8)
 ############################
 
 ############################
@@ -121,6 +121,9 @@ coefData$iv[coefData$iv=='gdp_ij'] = 'Log(GDP)$_{i, t-1}$'
 coefData$iv[coefData$iv=='pop_ij'] = 'Log(Population)$_{i, t-1}$'
 coefData$iv[coefData$iv=='wrldexp_ij'] = 'Log(Total~Exports)$_{i, t-1}$'
 coefData$iv = factor(coefData$iv, levels=unique(coefData$iv))
+
+# Save coef data for comparison with dd model in coefCompare.R
+save(coefData, file='~/Dropbox/Research/WardProjects/tensorZ/Data/fromModel/mcmcCoef.rda')
 
 # Plot
 # coefData$iv = factor(coefData$iv, levels=dimnames(BPS[[3]])[[2]])

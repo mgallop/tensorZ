@@ -38,6 +38,10 @@ forms = lapply(dvs, function(dv){
 
 mods = lapply(forms, function(form) mod = lm(form, data=dyadData) )
 
+# Save mod results for coefCompare.R
+ddCoefData = lapply(mods, function(x){ summary(x)$'coefficients' })
+save(ddCoefData, file='~/Dropbox/Research/WardProjects/tensorZ/Data/fromModel/ddCoef.rda')
+
 # Model results
 loadPkg('apsrtable')
 fname = file(paste0(outPath, 'dyadcoef.tex'))
