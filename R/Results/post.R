@@ -32,6 +32,18 @@ dimnames(BPS[[3]])[[1]] = dvs
 dimnames(BPS[[3]])[[2]] = ivs
 ############################
 
+###########################
+# Standardize B3 coefficients
+sdY = apply(Y, c(3), sd)
+sdX = apply(X, c(3), sd)
+divMat = matrix( 
+	c(sdX/sdY[1], sdX/sdY[2]), byrow=TRUE,
+	nrow=2, dimnames=list(names(sdY), names(sdX)) )
+
+for(ii in 1:dim(BPS[[3]])[3]){
+	BPS[[3]][,,ii] = BPS[[3]][,,ii] * divMat }
+###########################
+
 ############################
 # Trace plots by row
 dvs=dim(BPS[[3]])[1]
@@ -123,7 +135,7 @@ coefData$iv[coefData$iv=='wrldexp_ij'] = 'Log(Total~Exports)$_{i, t-1}$'
 coefData$iv = factor(coefData$iv, levels=unique(coefData$iv))
 
 # Save coef data for comparison with dd model in coefCompare.R
-save(coefData, file='~/Dropbox/Research/WardProjects/tensorZ/Data/fromModel/mcmcCoef.rda')
+# save(coefData, file='~/Dropbox/Research/WardProjects/tensorZ/Data/fromModel/mcmcCoef.rda')
 
 # Plot
 # coefData$iv = factor(coefData$iv, levels=dimnames(BPS[[3]])[[2]])
