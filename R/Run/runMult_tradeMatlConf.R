@@ -12,6 +12,11 @@ source( paste0(rFuncs, 'tfunctions.r') )
 #### 
 # data
 load(paste0(inPath, "YX.rda"))
+# Subset to in out sample
+trainPd = dimnames(Y)[[length(dim(Y))]][1:141]
+testPd = dimnames(Y)[[length(dim(Y))]][142:165]
+Y = Y[,,,trainPd]
+X = X[,,,trainPd]
 ####
 
 #### Maxim Likelihood
