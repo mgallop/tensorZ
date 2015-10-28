@@ -11,25 +11,22 @@ source( paste0(rFuncs, 'tfunctions.r') )
 
 #### 
 # data
-load(paste0(inPath, "YX.rda"))
-# Subset to in out sample
-trainPd = dimnames(Y)[[length(dim(Y))]][1:141]
-testPd = dimnames(Y)[[length(dim(Y))]][142:165]
-Y = Y[,,,trainPd]
-X = X[,,,trainPd]
+load(paste0(inPath, "train.rda"))
+Y = yIn
+X = xIn
 ####
 
 #### Maxim Likelihood
 B = mlm.ALS(Y, X)
-save(B, file=paste0('mlikTradeConf.rda'))
+save(B, file=paste0('mlikTradeConf_v2.rda'))
 ####
 
 #### MCMC 
 # mcmc function parameters
-NS = 5000 ; NB = 500 ; sdens = 100 ; plot = TRUE
+NS = 2500 ; NB = 500 ; sdens = 100 ; plot = TRUE
 seed = 6886 ; rstart = FALSE
 # output name
-fname="tensorTradeConf" 
+fname="tensorTradeConf_v2" 
 setwd(outPath)
 # run
 source(paste0(rFuncs, "mcmc.r") )
