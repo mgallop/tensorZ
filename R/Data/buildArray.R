@@ -113,8 +113,8 @@ dimnames(X)[[4]] = dimnames(Y)[[4]]
 dimnames(X)[[3]] = c(
 	'exp_ij', 'mconf_ij', 'exp_ji', 'mconf_ji', 'exp_ijk', 'mconf_ijk',
 	'pta_ij', 'dist_ij', 'ally_ij', 'ally_ijk', 
-	'ipol_ij', 'igdp_ij', 'ipop_ij', 'iwrldexp_ij',
-	'jpol_ij', 'jgdp_ij', 'jpop_ij', 'jwrldexp_ij'
+	'pol_i', 'gdp_i', 'pop_i', 'wrldexp_i',
+	'pol_j', 'gdp_j', 'pop_j', 'wrldexp_j'
 	)
 
 # Split into train and test

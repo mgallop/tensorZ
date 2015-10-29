@@ -3,10 +3,12 @@ if( Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m' ) {
 
 ############################
 # data
-load(paste0(inPath, "YX.rda"))
+load(paste0(inPath, "train.rda"))
+Y = yIn
+X = xIn
 
 # results
-load(paste0(outPath, 'tensorTradeConf'))
+load(paste0(outPath, 'tensorTradeConf_v2'))
 
 # Change outpath to presentation
 outPath = '~/Research/WardProjects/tensorZ/Presentation/Graphics/'
@@ -31,18 +33,6 @@ dimnames(BPS[[2]])[[2]] = cntries
 dimnames(BPS[[3]])[[1]] = dvs
 dimnames(BPS[[3]])[[2]] = ivs
 ############################
-
-###########################
-# Standardize B3 coefficients
-sdY = apply(Y, c(3), sd)
-sdX = apply(X, c(3), sd)
-divMat = matrix( 
-	c(sdX/sdY[1], sdX/sdY[2]), byrow=TRUE,
-	nrow=2, dimnames=list(names(sdY), names(sdX)) )
-
-for(ii in 1:dim(BPS[[3]])[3]){
-	BPS[[3]][,,ii] = BPS[[3]][,,ii] * divMat }
-###########################
 
 ############################
 # Trace plots by row
