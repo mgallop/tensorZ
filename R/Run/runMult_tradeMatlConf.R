@@ -23,7 +23,7 @@ save(B, file=paste0('mlikTradeConf_v2.rda'))
 
 #### MCMC 
 # mcmc function parameters
-NS = 2500 ; NB = 500 ; sdens = 100 ; plot = TRUE
+NS = 2500 ; NB = 500 ; sdens = 100 ; plot = FALSE
 seed = 6886 ; rstart = FALSE
 # output name
 fname="tensorTradeConf_v2" 

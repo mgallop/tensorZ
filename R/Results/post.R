@@ -128,7 +128,7 @@ coefData$iv = factor(coefData$iv, levels=unique(coefData$iv))
 # save(coefData, file='~/Dropbox/Research/WardProjects/tensorZ/Data/fromModel/mcmcCoef.rda')
 
 # Plot
-# coefData$iv = factor(coefData$iv, levels=dimnames(BPS[[3]])[[2]])
+coefData$iv = factor(coefData$iv, levels=dimnames(BPS[[3]])[[2]])
 ggCoef=ggplot(coefData, aes(x=iv, y=mu, color=sig))
 ggCoef=ggCoef + geom_point() + facet_wrap(dv~end, scales = 'free')
 ggCoef = ggCoef + geom_linerange(aes(ymin=lo95, ymax=up95), alpha = .3, size = 0.3)
