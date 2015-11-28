@@ -19,7 +19,7 @@ loadPkg=function(toLoad){
 }
 
 toLoad=c(
-	'foreign' , 'countrycode' ,
+	'foreign' , 'countrycode' , 'RMySQL',
 	'reshape2', 'magrittr', 'dplyr', 'stringr','data.table', 'abind',
 	'ggplot2', 'grid', 'xtable', 'tikzDevice',	
 	'network'

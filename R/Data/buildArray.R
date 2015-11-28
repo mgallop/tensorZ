@@ -27,8 +27,8 @@ stopifnot( sum(is.na(dirDyad)) == 0 )
 source(paste0(rFuncs, 'mltrHelpers.R'))
 
 # Cast into array format
-expArr = castArray(dirDyad, 'exportsLog')
-confArr = castArray(dirDyad, 'matlConfLog')
+expArr = castArray(dirDyad, 'exports')
+confArr = castArray(dirDyad, 'matlConf')
 
 # Combine arrays
 Z = array( dim=append( dim(expArr), 2, after=2 ) )
