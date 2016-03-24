@@ -68,11 +68,12 @@ cl = makeCluster( length(mods) )
 registerDoParallel(cl)
 
 B = foreach(ii = 1:length(mods)) %dopar% { 
-	return( mlm.ALS(yIn, xIn[,,mods[[ii]],] ) )
+	return( alm.ALS(yIn, xIn[,,mods[[ii]],] ) )
 }
 stopCluster(cl)
 
-save(B, file='~/Dropbox/other/mleModelSelecBetaStdz2.rda')
+# save(B, file='~/Dropbox/other/mleModelSelecBetaStdz2.rda')
+save(B, file='~/Dropbox/other/mleModelSelecBetaStdz2_Add.rda')
 ####
 
 #### Model selection
@@ -98,8 +99,10 @@ loadPkg(toLoad)
 cl = makeCluster( length(mods) )
 registerDoParallel(cl)
 modPerf = foreach(ii = 1:length(mods), .packages='magrittr') %dopar% { 
-	predIn = tprod(xIn[,,mods[[ii]],], B[[ii]]) %>% diagFix(.) 
-	predOut = tprod(xOut[,,mods[[ii]],], B[[ii]]) %>% diagFix(.) 
+	# predIn = tprod(xIn[,,mods[[ii]],], B[[ii]]) %>% diagFix(.) 
+	# predOut = tprod(xOut[,,mods[[ii]],], B[[ii]]) %>% diagFix(.) 
+	predIn = tsum(xIn[,,mods[[ii]],], B[[ii]]) %>% diagFix(.) 
+	predOut = tsum(xOut[,,mods[[ii]],], B[[ii]]) %>% diagFix(.) 	
 	aggIn = getAggPerf(predIn, yIn); colnames(aggIn) = paste0('In-',colnames(aggIn) )
 	aggOut = getAggPerf(predOut, yOut); colnames(aggOut) = paste0('Out-',colnames(aggOut) )
 	aggPerf = cbind(aggIn, aggOut)
@@ -107,7 +110,8 @@ modPerf = foreach(ii = 1:length(mods), .packages='magrittr') %dopar% {
 }
 stopCluster(cl)
 
-save(modPerf, file='~/Dropbox/other/mleModelSelecPerfStdz2.rda')
+# save(modPerf, file='~/Dropbox/other/mleModelSelecPerfStdz2.rda')
+save(modPerf, file='~/Dropbox/other/mleModelSelecPerfStdz2_Add.rda')
 
 print(modPerf)
 ####
