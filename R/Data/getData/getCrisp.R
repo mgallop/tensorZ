@@ -21,7 +21,7 @@ crisp$polity = crisp$DEMOC - crisp$AUTOC + 11
 # Add in US data...10s all the way through
 ## Polity
 slice = crisp[crisp$country=='FRANCE',]
-slice$country = 'United States';slice$ccode = 2;slice$polity = 10
+slice$country = 'United States';slice$ccode = 2;slice$polity = 21
 ## IMF WEI Dataset
 imf = read.csv(paste0(inPath, 'weoreptc.csv'))
 relVars = c('Population', 'Gross domestic product, current prices', 'Gross domestic product per capita, current prices')
